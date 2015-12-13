@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Sampler</title>
+	<link rel="stylesheet" type="text/css" href="css/avenir-white.css">
+
+	<link rel="stylesheet" href="js/highlight/styles/darkula.css">
+	<script src="js/highlight/highlight.pack.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+
+
+	<h1>Sampler</h1>
+
+	<blockquote>
+		A sampler creates <strong>values</strong> between 0 and 1 for every position of a two-dimensional map. A sampler
+		does also have a <strong>scale</strong>. It uses a <strong>seed</strong> if it based on a random algorithm.
+		The values of a Sampler can be modified by a <a href="modifier.html">Modifier</a>. The values of a <em>Sampler</em>
+		can be interpreted by an <a href="interpreter.html">Interpreter</a>. A sampler is an sub element of a <a href="layer.html">Layer</a>.
+	</blockquote>
+
+	<blockquote>
+		<h2>Flat</h2>
+		This is the most basic of all <em>Samplers</em>. It returns one <strong>value</strong> for every position.
+		The parameters <strong>seed</strong> and <strong>scale</strong> are not used for this <em>Sampler</em>.
+	</blockquote>
+
+	<blockquote>
+		<h2>Noise</h2>
+		Returns a value based on a noise algorithm. The following algorithms are implemented:
+		<h3>Simplex Noise</h3>
+		<img src="img/sampler_noise_sn.png">
+		Read more about simplex noise on <a href="https://en.wikipedia.org/wiki/Simplex_noise">wikipedia</a>.
+	</blockquote>
+
+	<blockquote>
+		<h2>MaskedSampler</h2>
+		The <em>MaskSampler</em> combines one <em>Sampler</em> as <strong>mask</strong> with another Sampler for the <strong>value</strong>.
+		Using a <a href="modifier.html">Modifier</a> on this Sampler modifies the <strong>value</strong> but not the <strong>mask</strong>.
+		One or more <em>MaskSampler</em> are the root elements of a <a href="layer.html">Layer</a>.
+		<p>
+		<img src="img/sampler_masked.png">
+		</p>
+		<h3>Calculation of the value</h3>
+		<pre><code class="java">mask(x, y) * sample(x, y)</code></pre>
+
+	</blockquote>
+
+
+	<blockquote>
+		<h2>Combined</h2>
+		A <em>Combined</em> <em>Sampler</em> combines one or more <strong>child</strong> <em>Sampler</em>. The <string>children</string>
+		are combined one after another, from the first to the last using <strong>operators</strong>.
+
+		<h3>Operators</h3>
+		<h5>Plus</h5>
+		<h5>Minus</h5>
+		<h5>Mix</h5>
+		<h5>And</h5>
+		<h5>Or</h5>
+		<h5>Highest</h5>
+		<h5>Lowest</h5>
+
+		<h3>Child settings</h3>
+		Every <strong>child</strong> can be manipulated by overriding the <strong>scale</strong> and <strong>seed</strong>.
+		This settings are not affecting the original <em>Sampler</em> but the <strong>child</strong> instance in this
+		<em>Combined</em> <em>Sampler</em>.		It is also possible to <strong>invert</strong> or <strong>multiply</strong>
+		the value returned by this <strong>child</strong> instance.
+
+		<h3>Hint</h3>
+		The <em>Combined</em> <em>Sampler</em> can also be used to manipulate a single existing Sampler. E.g to invert
+		an existing Sampler to use it as an inverted mask.
+	</blockquote>
+
+		<h2>AContinent (Rigged Noise)</h2>
+		The <em>AContinent</em> <em>Sampler</em> combines multiple <em>Noise</em> <em>Sampler</em> to create a more
+		complex landscape. The <strong>iteration</strong> parameter is the count of <em>Noise</em> <em>Samplers</em> to use.
+		The higher this value the more complex is the landscape. Attention should be paid to the computing performance
+		using a high <strong>iteration</strong> value.
+		The <strong>iteration growth</strong> controls the
+		<strong>scale</strong> for every iteration.
+
+		<p>
+			The end result of the iterations are manipulated using the <strong>size</strong> and <strong>edge</strong>
+			parameters.<br>
+			<img src="img/sampler_continent.png">
+		</p>
+
+		<h3>Scale of the NoiseSampler for every iteration</h3>
+		<pre><code class="java">float currentScale = baseScale * (float) Math.pow(growth, iteration);</code></pre>
+
+	</blockquote>
+
+</body>
+</html>
