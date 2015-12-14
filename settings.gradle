@@ -1,1 +1,5 @@
 include 'editor', 'opusprotolib'
+include 'gsonloader'
+include 'opusloaderjson'
+findProject(':opusloaderjson')?.name = 'opusjsonloader'
+
