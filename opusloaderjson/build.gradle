@@ -1,0 +1,15 @@
+version '1.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.6
+
+repositories {
+	mavenCentral()
+}
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+dependencies {
+	compile 'com.squareup.moshi:moshi:1.0.0'
+}
