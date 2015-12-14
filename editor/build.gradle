@@ -7,22 +7,22 @@ project.ext.mainClassName = "com.nukethemoon.tools.opusproto.editor.Editor"
 project.ext.assetsDir = new File("assets");
 
 task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-    workingDir = project.assetsDir
-    ignoreExitValue = true
+	main = project.mainClassName
+	classpath = sourceSets.main.runtimeClasspath
+	standardInput = System.in
+	workingDir = project.assetsDir
+	ignoreExitValue = true
 }
 
 task dist(type: Jar) {
-    from files(sourceSets.main.output.classesDir)
-    from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
+	from files(sourceSets.main.output.classesDir)
+	from files(sourceSets.main.output.resourcesDir)
+	from {configurations.compile.collect {zipTree(it)}}
+	from files(project.assetsDir);
  
-    manifest {
-        attributes 'Main-Class': project.mainClassName
-    }
+	manifest {
+		attributes 'Main-Class': project.mainClassName
+	}
 }
 
 dist.dependsOn classes
