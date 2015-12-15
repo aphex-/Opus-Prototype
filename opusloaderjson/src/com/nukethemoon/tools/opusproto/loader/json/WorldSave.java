@@ -1,11 +1,12 @@
-package com.nukethemoon.tools.opusproto.editor;
+package com.nukethemoon.tools.opusproto.loader.json;
 
 import com.google.gson.JsonElement;
 import com.nukethemoon.tools.opusproto.generator.WorldConfiguration;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
 
-public class Save {
+
+public class WorldSave {
 
 	public String version;
 

@@ -61,7 +61,7 @@ public class Styles {
 	public static TextField.TextFieldStyle TEXT_FIELD_STYLE_FAIL;
 	public static TextField.TextFieldStyle TEXT_FIELD_STYLE;
 
-	public static void load() {
+	public static void init() {
 
 		ICON_UP = new SpriteDrawable(			new Sprite(new Texture(Gdx.files.internal(Config.IMAGE_PATH + "upIcon.png"))));
 		ICON_DOWN = new SpriteDrawable(			new Sprite(new Texture(Gdx.files.internal(Config.IMAGE_PATH + "downIcon.png"))));

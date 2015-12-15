@@ -8,8 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.nukethemoon.tools.opusproto.editor.Config;
-import com.nukethemoon.tools.opusproto.editor.FileOperationController;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
+import com.nukethemoon.tools.opusproto.loader.json.JsonLoader;
 
 public class ProjectDialog extends BaseDialog {
 
@@ -43,7 +43,7 @@ public class ProjectDialog extends BaseDialog {
 		}
 
 		projectsList = new List<String>(skin);
-		FileHandle[] list = projectsDir.list(FileOperationController.DIRECTORY_FILTER);
+		FileHandle[] list = projectsDir.list(JsonLoader.DIRECTORY_FILTER);
 		String[] projectNames = new String[list.length];
 		for (int i = 0; i < list.length; i++) {
 			projectNames[i] = list[i].name();

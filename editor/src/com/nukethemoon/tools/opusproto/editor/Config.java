@@ -11,11 +11,10 @@ public class Config {
 	public static boolean DEBUG = true;
 
 	public static String PROJECT_PATH = "data/worlds/";
+
+	public static String SETTINGS_FILE = "data/editor_settings.json";
 	public static String IMAGE_PATH_SPLASH = "data/img/opus_splash.png";
 	public static String IMAGE_PATH = "data/img/";
 	public static String SKIN_PATH = "data/skin/uiskin.json";
-
-	public static String SUB_FOLDER_LAYER = "layer/";
-	public static String SUB_FOLDER_SAMPLER = "sampler/";
 
 }

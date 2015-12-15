@@ -23,7 +23,6 @@ import com.nukethemoon.tools.ani.AnimationFinishedListener;
 import com.nukethemoon.tools.ani.BaseAnimation;
 import com.nukethemoon.tools.opusproto.SamplerLoader;
 import com.nukethemoon.tools.opusproto.editor.Config;
-import com.nukethemoon.tools.opusproto.editor.FileOperationController;
 import com.nukethemoon.tools.opusproto.editor.InputController;
 import com.nukethemoon.tools.opusproto.editor.Settings;
 import com.nukethemoon.tools.opusproto.editor.message.CommandDrawMap;
@@ -63,7 +62,6 @@ import com.nukethemoon.tools.opusproto.editor.ui.sampler.previews.SamplerPreview
 import com.nukethemoon.tools.opusproto.editor.ui.windows.SamplerEditor;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
-import com.nukethemoon.tools.opusproto.exceptions.SamplerUnresolvedDependencyException;
 import com.nukethemoon.tools.opusproto.generator.ChunkListener;
 import com.nukethemoon.tools.opusproto.generator.WorldConfiguration;
 import com.nukethemoon.tools.opusproto.generator.WorldGenerator;
@@ -71,6 +69,7 @@ import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
+import com.nukethemoon.tools.opusproto.loader.json.JsonLoader;
 import com.nukethemoon.tools.opusproto.noise.AbstractNoiseAlgorithm;
 import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
 import com.nukethemoon.tools.opusproto.noise.algorithms.CellNoise;
@@ -149,7 +148,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	private Sprite samplerSnapshot = null;
 	private boolean samplerSnapshotDrawBehind = true;
 	public static Stage STAGE;
-	private FileOperationController fileOperation;
+	private JsonLoader fileOperation;
 	private InputMultiplexer inputMultiplexer;
 	private InputController inputController;
 	private float performanceFactor = 1;
@@ -177,12 +176,12 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	@Override
 	public void create() {
-		// graphic stuff
+
 		bus.register(this);
 
-		Styles.load();
+		Styles.init();
+		settings = Settings.load(Config.SETTINGS_FILE);
 
-		settings = FileOperationController.loadSettings();
 		cfg.width = settings.screenWidth;
 		cfg.height = settings.screenHeight;
 		windowHeight = cfg.height;
@@ -260,7 +259,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	}
 
 	private void openLoadDialog() {
-		if (!FileOperationController.projectExists(settings.openProject)) {
+		if (!Gdx.files.local(Config.PROJECT_PATH + settings.openProject).exists()) {
 			ProjectDialog dialog = new ProjectDialog(Styles.UI_SKIN, STAGE);
 			dialog.show(STAGE);
 			dialog.setResultListener(new BaseDialog.ResultListener() {
@@ -322,7 +321,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			splashScreen.remove();
 		}
 
-		fileOperation = new FileOperationController(projectName);
+		fileOperation = new JsonLoader();
 
 		noisePool = new NoiseAlgorithmPool();
 		samplerLoader = new SamplerLoader();
@@ -330,15 +329,13 @@ public class Editor implements ApplicationListener, ChunkListener {
 		samplerLoader.addInterpreter(new ColorInterpreter(DEFAULT_INTERPRETER_NAME));
 
 		try {
-			worldGenerator = fileOperation.load(samplerLoader, noisePool);
-
-		} catch (SamplerInvalidConfigException e) {
+			worldGenerator = fileOperation.load(samplerLoader, noisePool, Config.PROJECT_PATH + projectName + "/save.json");
+		} catch (Exception e) {
+			Log.e(Editor.class, e.getMessage());
 			e.printStackTrace();
-		} catch (SamplerUnresolvedDependencyException e) {
-			e.printStackTrace();
-		} catch (SamplerRecursionException e) {
-			e.printStackTrace();
+			showErrorDialog(e.getMessage());
 		}
+
 		worldConfiguration = worldGenerator.getConfig();
 		worldGenerator.addRegionListener(this);
 
@@ -416,7 +413,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			public void onResult(Object result) {
 				String name = (String) result;
 				if (isValidName(name)) {
-					if (!fileOperation.projectExists(name)) {
+					if (!Gdx.files.local(Config.PROJECT_PATH  + name).exists()) {
 						fileOperation.saveAs(samplerLoader, worldGenerator, name);
 						updateWorldName(name);
 					} else {
@@ -1040,7 +1037,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			settings.windows = ui.createWindowSettings();
 		}
 		if (fileOperation != null) {
-			fileOperation.saveSettings(settings);
+			Settings.save(settings, Config.SETTINGS_FILE);
 		}
 	}
 
