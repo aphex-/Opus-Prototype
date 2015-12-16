@@ -224,7 +224,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 			@Override
 			public void logDebug(String tag, String message) {
-				Gdx.app.log(tag, message);
+				Gdx.app.debug(tag, message);
 			}
 		};
 
@@ -233,30 +233,34 @@ public class Editor implements ApplicationListener, ChunkListener {
 		setExitDialog();
 
 		if (!Config.DEBUG) {
-			splashScreen = new Image(new Texture(Config.IMAGE_PATH_SPLASH));
-			splashScreen.setPosition(cfg.width / 2 - splashScreen.getWidth() / 2, cfg.height / 2 - splashScreen.getHeight() / 2);
-			STAGE.addActor(splashScreen);
-			AnimationFinishedListener listener = new AnimationFinishedListener() {
+			showSplashScreenAnimation(new AnimationFinishedListener() {
 				@Override
 				public void onAnimationFinished(BaseAnimation baseAnimation) {
-					openLoadDialog();
-				}
-			};
-			ani.add(new BaseAnimation(1500, listener) {
-				@Override
-				protected void onProgress(float v) {
-					Color imageColor = splashScreen.getColor();
-					imageColor.a = v;
-					splashScreen.setColor(imageColor);
+					openProjectDialog();
 				}
 			});
 		} else {
-			openLoadDialog();
+			openProjectDialog();
 		}
 
 	}
 
-	private void openLoadDialog() {
+	private void showSplashScreenAnimation(AnimationFinishedListener listener) {
+		splashScreen = new Image(new Texture(Config.IMAGE_PATH_SPLASH));
+		splashScreen.setPosition(cfg.width / 2 - splashScreen.getWidth() / 2,
+				cfg.height / 2 - splashScreen.getHeight() / 2);
+		STAGE.addActor(splashScreen);
+		ani.add(new BaseAnimation(1500, listener) {
+			@Override
+			protected void onProgress(float v) {
+				Color imageColor = splashScreen.getColor();
+				imageColor.a = v;
+				splashScreen.setColor(imageColor);
+			}
+		});
+	}
+
+	private void openProjectDialog() {
 		if (!Gdx.files.local(Config.PROJECT_PATH + settings.openProject).exists()) {
 			ProjectDialog dialog = new ProjectDialog(Styles.UI_SKIN, STAGE);
 			dialog.show(STAGE);
@@ -325,7 +329,12 @@ public class Editor implements ApplicationListener, ChunkListener {
 		samplers.addInterpreter(new ColorInterpreter(DEFAULT_INTERPRETER_NAME));
 
 		try {
-			opus = fileOperation.load(samplers, algorithms, Config.PROJECT_PATH + projectName + "/save.json");
+			String projectFile = Config.PROJECT_PATH + projectName + Config.SAVE_FILE_NAME;
+			if (Gdx.files.local(projectFile).exists()) {
+				opus = fileOperation.load(samplers, algorithms, projectFile);
+			} else {
+				opus = new Opus(new OpusConfiguration(), new Layer[]{});
+			}
 		} catch (Exception e) {
 			showException(e, "Error initializing project.");
 			return;
@@ -347,7 +356,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			opusConfiguration.layerIds = new String[]{"BaseLayer"};
 		}
 
-		createEditorDefaultSampler();
+		createEditorDefaultSampler(samplers, algorithms, opusConfiguration.seed);
 
 		ui = new UI(STAGE, cfg, opus, algorithms, samplers, bus, Styles.UI_SKIN, settings);
 		bus.register(ui);
@@ -364,18 +373,18 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	}
 
-	private void createEditorDefaultSampler() {
+	private void createEditorDefaultSampler(Samplers sam, Algorithms alg, double opusSeed) {
 		try {
-			samplers.addSampler(
+			sam.addSampler(
 					new NoiseSampler(new NoiseConfig(DEFAULT_SAMPLER_NAME),
-							opusConfiguration.seed, algorithms, samplers));
+							opusSeed, alg, sam));
 
 			MaskedSamplerConfig maskedSamplerConfig = new MaskedSamplerConfig(DEFAULT_MASK_SAMPLER_NAME);
 			maskedSamplerConfig.samplerItems = new ChildSamplerConfig[2];
 			maskedSamplerConfig.samplerItems[0] = new ChildSamplerConfig(DEFAULT_SAMPLER_NAME);
 			maskedSamplerConfig.samplerItems[1] = new ChildSamplerConfig(DEFAULT_SAMPLER_NAME);
-			samplers.addSampler(
-					new MaskedSampler(maskedSamplerConfig, opusConfiguration.seed, algorithms, samplers)
+			sam.addSampler(
+					new MaskedSampler(maskedSamplerConfig, opusSeed, alg, sam)
 			);
 		} catch (SamplerInvalidConfigException e) {
 			showException(e, "Error loading editor standard sampler.");

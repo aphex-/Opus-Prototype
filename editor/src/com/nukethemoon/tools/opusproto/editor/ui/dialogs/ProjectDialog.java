@@ -63,8 +63,8 @@ public class ProjectDialog extends BaseDialog {
 
 	@Override
 	protected void result(Object object) {
-		boolean b = (Boolean) object;
-		if (b) {
+		boolean resultOpen = (Boolean) object;
+		if (resultOpen) {
 			listener.onResult(projectsList.getSelected());
 		} else {
 			NewProjectDialog newProjectDialog = new NewProjectDialog(getSkin(), stage);

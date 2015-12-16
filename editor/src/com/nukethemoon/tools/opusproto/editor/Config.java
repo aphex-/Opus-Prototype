@@ -11,6 +11,7 @@ public class Config {
 	public static boolean DEBUG = true;
 
 	public static String PROJECT_PATH = "data/worlds/";
+	public static String SAVE_FILE_NAME = "/save.json";
 
 	public static String SETTINGS_FILE = "data/editor_settings.json";
 	public static String IMAGE_PATH_SPLASH = "data/img/opus_splash.png";

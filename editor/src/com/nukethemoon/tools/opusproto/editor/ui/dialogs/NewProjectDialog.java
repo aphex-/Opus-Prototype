@@ -1,6 +1,7 @@
 package com.nukethemoon.tools.opusproto.editor.ui.dialogs;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -23,8 +24,8 @@ public class NewProjectDialog extends BaseDialog {
 		getContentTable().add(textField);
 		getContentTable().row();
 
-		TextButton button = new TextButton("create", skin);
-		button.addListener(new ChangeListener() {
+		TextButton createButton = new TextButton("create", skin);
+		createButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				if (textField.getText() == null || textField.getText().equals("")) {
@@ -37,6 +38,8 @@ public class NewProjectDialog extends BaseDialog {
 						errorDialog.show(stage);
 					} else {
 						Gdx.files.local(Config.PROJECT_PATH + textField.getText()).mkdirs();
+						FileHandle local = Gdx.files.local(Config.PROJECT_PATH + textField.getText() + Config.SAVE_FILE_NAME);
+
 						listener.onResult(textField.getText());
 						hide();
 					}
@@ -44,7 +47,7 @@ public class NewProjectDialog extends BaseDialog {
 			}
 		});
 
-		getContentTable().add(button).colspan(2);
+		getContentTable().add(createButton).colspan(2);
 	}
 
 }
