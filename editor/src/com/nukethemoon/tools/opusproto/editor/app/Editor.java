@@ -95,14 +95,12 @@ import com.squareup.otto.ThreadEnforcer;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 public class Editor implements ApplicationListener, ChunkListener {
 
@@ -279,7 +277,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		try {
 			Desktop.getDesktop().browse(htmlFile.toURI());
 		} catch (IOException e) {
-			e.printStackTrace();
+			showException(e, "Error opening help file " + filename);
 		}
 	}
 
@@ -287,10 +285,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 		try {
 			URL url = new URL(Config.NTM_URL);
 			Desktop.getDesktop().browse(url.toURI());
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			showException(e, "Error opening file " + Config.NTM_URL);
 		}
 	}
 
@@ -331,9 +327,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		try {
 			opus = fileOperation.load(samplers, algorithms, Config.PROJECT_PATH + projectName + "/save.json");
 		} catch (Exception e) {
-			Log.e(Editor.class, e.getMessage());
-			showErrorDialog(e);
-			e.printStackTrace();
+			showException(e, "Error initializing project.");
 			return;
 		}
 
@@ -347,7 +341,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 				config.interpreterId = DEFAULT_INTERPRETER_NAME;
 				opus.getLayers().add(new Layer(config, opusConfiguration.seed, samplers));
 			} catch (SamplerInvalidConfigException e) {
-				showErrorDialog(e.getMessage());
+				showException(e, "Error initializing project.");
+				return;
 			}
 			opusConfiguration.layerIds = new String[]{"BaseLayer"};
 		}
@@ -383,7 +378,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 					new MaskedSampler(maskedSamplerConfig, opusConfiguration.seed, algorithms, samplers)
 			);
 		} catch (SamplerInvalidConfigException e) {
-			showErrorDialog("Error loading editor standard sampler.");
+			showException(e, "Error loading editor standard sampler.");
+			return;
 		}
 
 
@@ -394,10 +390,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 	public void save(CommandSaveProject command) {
 		try {
 			fileOperation.save(samplers, opus, "/data/peter");
-		} catch (IOException e) {
-			Log.e(Editor.class, e.getMessage());
-			e.printStackTrace();
-			showErrorDialog(e.getMessage());
+		} catch (Exception e) {
+			showException(e, "Error saving project ");
 		}
 	}
 
@@ -437,7 +431,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 			Editor.post(new EventLayersChanged());
 
 		} catch (SamplerInvalidConfigException e) {
-			Editor.showErrorDialog("Error creating layer.");
+			showException(e, "Error creating layer " + command.layerId);
+			return;
 		}
 
 		/*if (command.layerId == null || command.layerId.length() == 0) {
@@ -544,11 +539,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 				positions.add(new int[]{x, y});
 			}
 		}
-		requestMap(positions);
+		requestChunks(positions);
 
 	}
 
-	private void requestMap(List<int[]> positions) {
+	private void requestChunks(List<int[]> positions) {
 		int[] regionX = new int[positions.size()];
 		int[] regionY = new int[positions.size()];
 
@@ -556,7 +551,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			regionX[i] = positions.get(i)[0];
 			regionY[i] = positions.get(i)[1];
 		}
-		requestMap(regionX, regionY);
+		requestChunks(regionX, regionY);
 	}
 
 	private void takeSnapshot(AbstractSampler sampler, boolean drawBehind, float opacity) {
@@ -608,7 +603,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 				}
 			}
 		}
-		requestMap(positions);
+		requestChunks(positions);
 
 		/*for (int i = 0; i < world.getLayers().size(); i++) {
 			for (Chunk chunk : world.getLayers().get(i).getGeneratedRegions()) {
@@ -617,13 +612,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 		}*/
 	}
 
-	private void requestMap(int x[], int y[]) {
+	private void requestChunks(int x[], int y[]) {
 		try {
 			opus.requestChunks(x, y);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			showException(e, "Error requesting chunk.");
 		}
 	}
 
@@ -660,10 +653,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 		try {
 			executor.execute();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			showException(e, "Error creating chunks.");
 		}
 	}
 
@@ -720,8 +711,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 				return;
 			}
 		} catch (SamplerRecursionException e) {
-			Log.e(Editor.class, e.getMessage());
-			e.printStackTrace();
+			showException(e, "Error deleting sampler " + command.samplerId);
+			return;
 		}
 
 
@@ -737,8 +728,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 			Editor.post(new EventSamplerPoolChanged());
 
 		} catch (SamplerRecursionException e) {
-			Log.e(Editor.class, e.getMessage());
-			e.printStackTrace();
+			showException(e, "Error deleting sampler " + command.samplerId);
+			return;
 		}
 	}
 
@@ -821,10 +812,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 				Editor.post(new EventSamplerPoolChanged());
 				Editor.post(new CommandOpenSamplerEditor(sampler.getConfig().id));
 			} catch (Exception e) {
-				Gdx.app.log(Editor.class.getSimpleName(), "Error creating sampler. " + e.getMessage());
+				showException(e, "Error creating sampler.");
+				return;
 			}
 		} else {
-			Gdx.app.log(Editor.class.getSimpleName(), "Can not find config class for sampler " + command.type);
+			showErrorDialog( "Can not find the config class for the sampler " + command.type);
 		}
 	}
 
@@ -1048,10 +1040,15 @@ public class Editor implements ApplicationListener, ChunkListener {
 		errorDialog.show(STAGE);
 	}
 
-	public static void showErrorDialog(Exception e) {
-		ErrorDialog errorDialog = new ErrorDialog(e.getClass().getSimpleName()
-				+ ": " + e.getMessage(), Styles.UI_SKIN);
-		errorDialog.show(STAGE);
+	private static void showException(Exception e) {
+		showException(e, "");
+	}
+
+	private static void showException(Exception e, String extraText) {
+		Log.e(Editor.class, e.getMessage());
+		showErrorDialog(extraText + " " + e.getClass().getSimpleName()
+				+ ": " + e.getMessage());
+		e.printStackTrace();
 	}
 
 	@Subscribe
@@ -1085,8 +1082,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 				try {
 					layer.init();
 				} catch (SamplerInvalidConfigException e) {
-					showErrorDialog("Error renaming layer child. " + e.getMessage());
-					e.printStackTrace();
+					showException(e, "Error renaming layer child.");
+					return;
 				}
 
 			}
