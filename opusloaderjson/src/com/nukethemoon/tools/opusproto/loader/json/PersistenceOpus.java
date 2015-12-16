@@ -6,7 +6,7 @@ import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
 
 
-public class WorldSave {
+public class PersistenceOpus {
 
 	public String version;
 

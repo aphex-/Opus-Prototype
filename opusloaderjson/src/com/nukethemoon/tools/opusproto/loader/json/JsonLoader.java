@@ -20,7 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * This class initializes Opus by a json file.
+ * This class loads and saves Opus using a json file.
  */
 public class JsonLoader {
 
@@ -68,22 +68,26 @@ public class JsonLoader {
 
 		samplers = samplers == null ? new Samplers() : samplers;
 		algorithms = algorithms == null ? new Algorithms() : algorithms;
+
 		byte[] bytes = Files.readAllBytes(Paths.get(filePath));
-		WorldSave save = gson.fromJson(new String(bytes, CHARSET), WorldSave.class);
-		WorldConfiguration worldConfiguration = save.worldConfig;
+		PersistenceOpus persistence = gson.fromJson(new String(bytes, CHARSET), PersistenceOpus.class);
+		WorldConfiguration worldConfiguration = persistence.worldConfig;
 		worldConfiguration.seed = Double.parseDouble(worldConfiguration.seedString);
-		AbstractSamplerConfiguration[] samplerConfigList = new AbstractSamplerConfiguration[save.samplerConfigs.length];
-		for (int i = 0; i < save.samplerConfigs.length; i++) {
-			WorldSave.SamplerConfigEntry entry = save.samplerConfigs[i];
-			samplerConfigList[i] = gson.fromJson(entry.data, Samplers.getConfigClassByName(entry.type));
+
+		AbstractSamplerConfiguration[] samplerConfigList = new AbstractSamplerConfiguration[persistence.samplerConfigs.length];
+		for (int samplerIndex = 0; samplerIndex < persistence.samplerConfigs.length; samplerIndex++) {
+			PersistenceOpus.SamplerConfigEntry entry = persistence.samplerConfigs[samplerIndex];
+			samplerConfigList[samplerIndex] = gson.fromJson(entry.data, Samplers.getConfigClassByName(entry.type));
 		}
 		samplers.loadSamplers(samplerConfigList, worldConfiguration.seed, algorithms);
-		for (int i = 0; i < save.interpreters.length; i++) {
-			samplers.addInterpreter(save.interpreters[i]);
+
+		for (int interpreterIndex = 0; interpreterIndex < persistence.interpreters.length; interpreterIndex++) {
+			samplers.addInterpreter(persistence.interpreters[interpreterIndex]);
 		}
-		Layer[] layerList = new Layer[save.layerConfigs.length];
-		for (int i = 0; i < save.layerConfigs.length; i++) {
-			layerList[i] = new Layer(save.layerConfigs[i], worldConfiguration.seed, samplers);
+
+		Layer[] layerList = new Layer[persistence.layerConfigs.length];
+		for (int layerIndex = 0; layerIndex < persistence.layerConfigs.length; layerIndex++) {
+			layerList[layerIndex] = new Layer(persistence.layerConfigs[layerIndex], worldConfiguration.seed, samplers);
 		}
 		return new Opus(worldConfiguration, layerList);
 	}
