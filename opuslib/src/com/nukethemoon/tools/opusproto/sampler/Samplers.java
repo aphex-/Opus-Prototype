@@ -1,15 +1,12 @@
-package com.nukethemoon.tools.opusproto;
+package com.nukethemoon.tools.opusproto.sampler;
 
+import com.nukethemoon.tools.opusproto.Config;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerUnresolvedDependencyException;
 import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
-import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
-import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
-import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerContainerConfig;
-import com.nukethemoon.tools.opusproto.sampler.ChildSamplerConfig;
 import com.nukethemoon.tools.opusproto.sampler.acontinent.AContinent;
 import com.nukethemoon.tools.opusproto.sampler.acontinent.AContinentConfig;
 import com.nukethemoon.tools.opusproto.sampler.combined.Combined;

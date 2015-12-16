@@ -21,7 +21,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.nukethemoon.tools.ani.Ani;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 import com.nukethemoon.tools.ani.BaseAnimation;
-import com.nukethemoon.tools.opusproto.Samplers;
+import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Config;
 import com.nukethemoon.tools.opusproto.editor.InputController;
 import com.nukethemoon.tools.opusproto.editor.Settings;

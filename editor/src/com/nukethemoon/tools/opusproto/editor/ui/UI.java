@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.nukethemoon.tools.opusproto.Samplers;
+import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Settings;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandOpenAboutWindow;

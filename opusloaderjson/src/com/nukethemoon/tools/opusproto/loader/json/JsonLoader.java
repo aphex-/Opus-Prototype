@@ -2,7 +2,7 @@ package com.nukethemoon.tools.opusproto.loader.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nukethemoon.tools.opusproto.Samplers;
+import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerUnresolvedDependencyException;

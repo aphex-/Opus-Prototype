@@ -1,6 +1,6 @@
 package com.nukethemoon.tools.opusproto.gemoetry.scatterer;
 
-import com.nukethemoon.tools.opusproto.Samplers;
+import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.gemoetry.AbstractGeometryData;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;

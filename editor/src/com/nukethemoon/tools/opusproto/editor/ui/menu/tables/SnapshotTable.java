@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.nukethemoon.tools.opusproto.Samplers;
+import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandSnapshotChangeSettings;
 import com.nukethemoon.tools.opusproto.editor.message.CommandSnapshotDelete;

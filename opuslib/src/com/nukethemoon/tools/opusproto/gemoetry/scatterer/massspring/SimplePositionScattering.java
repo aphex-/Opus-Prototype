@@ -1,7 +1,7 @@
 package com.nukethemoon.tools.opusproto.gemoetry.scatterer.massspring;
 
 import com.nukethemoon.tools.opusproto.MathE;
-import com.nukethemoon.tools.opusproto.Samplers;
+import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.gemoetry.AbstractGeometryData;
 import com.nukethemoon.tools.opusproto.gemoetry.PointList;

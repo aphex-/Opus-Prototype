@@ -1,6 +1,6 @@
 package com.nukethemoon.tools.opusproto.sampler.acontinent;
 
-import com.nukethemoon.tools.opusproto.Samplers;
+import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.noise.AbstractNoiseAlgorithm;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;

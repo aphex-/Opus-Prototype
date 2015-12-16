@@ -6,7 +6,7 @@ import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
-import com.nukethemoon.tools.opusproto.Samplers;
+import com.nukethemoon.tools.opusproto.sampler.Samplers;
 
 public class NoiseSampler extends AbstractSampler {
 
