@@ -25,6 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class initializes samplers by their configuration.
+ * It handles samplers that are depending on other samplers.
+ * It maps sampler classes to their configuration classes.
+ */
 public class Samplers {
 
 	private List<AbstractSampler> loadedSamplers = new ArrayList<AbstractSampler>();

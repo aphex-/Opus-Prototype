@@ -136,7 +136,7 @@ public class Combined extends AbstractSampler {
 	}
 
 	private double getSeedOfChild(int index) {
-		return getModifiedSeed(getSamplerSeed(), combinedConfig.samplerItems[index].seedModifier);
+		return getModifiedSeed(getContainingSeed(), combinedConfig.samplerItems[index].seedModifier);
 	}
 
 

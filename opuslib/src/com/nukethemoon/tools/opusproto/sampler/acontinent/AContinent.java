@@ -31,7 +31,7 @@ public class AContinent extends AbstractSampler {
 		float[][] data = new float[size][size];
 
 		float modifiedScale = scaleFactor * config.scale;
-		double modifiedSeed = getModifiedSeed(getSamplerSeed(), seedModifier);
+		double modifiedSeed = getModifiedSeed(getContainingSeed(), seedModifier);
 
 		if (c.iterations <= 0) {
 			return new float[size][size];

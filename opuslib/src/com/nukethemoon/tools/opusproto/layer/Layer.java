@@ -48,7 +48,7 @@ public class Layer extends AbstractSampler {
 			if (layerConfig.samplerItems[i].active) {
 
 				float scaleMod = layerConfig.samplerItems[i].scaleModifier;
-				double seedMod = getModifiedSeed(layerConfig.samplerItems[i].seedModifier, sampler.getSamplerSeed());
+				double seedMod = getModifiedSeed(layerConfig.samplerItems[i].seedModifier, sampler.getContainingSeed());
 
 				tmpMask = sampler.createMask(x, y, size, scaleMod, seedMod, buffer);
 				tmpValues = sampler.createValues(x, y, size, scaleMod, seedMod, buffer);

@@ -23,7 +23,7 @@ public class SamplerPreviewImage extends Image {
 			return null;
 		}
 
-		float[][] values = sampler.createValues(offsetX, offsetY, width, resolution, sampler.getSamplerSeed(), null);
+		float[][] values = sampler.createValues(offsetX, offsetY, width, resolution, sampler.getContainingSeed(), null);
 
 		Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
 		for (int x = 0; x < pixmap.getWidth(); x++) {

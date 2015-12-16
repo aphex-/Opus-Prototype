@@ -29,7 +29,7 @@ public class NoiseSampler extends AbstractSampler {
 										  int size, float scaleFactor, double seedModifier, ChunkRequestBuffer buffer) {
 
 
-		return noiseAlgorithm.createData(x, y, size, getModifiedSeed(getSamplerSeed(), seedModifier), config.scale * scaleFactor);
+		return noiseAlgorithm.createData(x, y, size, getModifiedSeed(getContainingSeed(), seedModifier), config.scale * scaleFactor);
 	}
 
 	@Override

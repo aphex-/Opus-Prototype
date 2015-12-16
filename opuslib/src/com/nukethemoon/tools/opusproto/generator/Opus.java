@@ -96,7 +96,7 @@ public class Opus {
 					offsetX, offsetY,
 					config.mapSize,
 					layer.getConfig().scale,
-					layer.getSamplerSeed(),
+					layer.getContainingSeed(),
 					dataBuffer);
 
 			chunk.getLayerData()[layerIndex] = data;

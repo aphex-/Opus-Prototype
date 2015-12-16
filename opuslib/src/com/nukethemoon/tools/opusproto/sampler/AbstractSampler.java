@@ -4,7 +4,7 @@ import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 
-public abstract class AbstractSampler implements ISampleable {
+public abstract class AbstractSampler implements ISeedContainer {
 
 	protected AbstractSamplerConfiguration config;
 
@@ -231,7 +231,7 @@ public abstract class AbstractSampler implements ISampleable {
 		return ((seed + modifier) % Double.MAX_VALUE);
 	}
 
-	public double getSamplerSeed() {
+	public double getContainingSeed() {
 		return samplerSeed;
 	}
 
