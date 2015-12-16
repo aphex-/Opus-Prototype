@@ -11,7 +11,6 @@ allprojects {
 	apply plugin: "eclipse"
 	apply plugin: "idea"
 
-	version = '1.0'
 	ext {
 		appName = "opusproto"
 		gdxVersion = '1.7.1'
@@ -54,6 +53,10 @@ project(":opusloaderjson") {
 		compile project(":opuslib")
 		compile 'com.google.code.gson:gson:2.3'
 	}
+}
+
+project(":example") {
+	apply plugin: "java"
 }
 
 tasks.eclipse.doLast {
