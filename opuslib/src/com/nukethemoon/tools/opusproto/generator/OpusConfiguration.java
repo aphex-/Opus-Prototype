@@ -1,8 +1,8 @@
 package com.nukethemoon.tools.opusproto.generator;
 
-public class WorldConfiguration {
+public class OpusConfiguration {
 
-	public WorldConfiguration() {
+	public OpusConfiguration() {
 		layerIds = new String[0];
 	}
 

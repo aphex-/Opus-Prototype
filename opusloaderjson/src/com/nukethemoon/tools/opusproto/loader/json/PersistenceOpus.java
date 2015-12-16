@@ -1,7 +1,7 @@
 package com.nukethemoon.tools.opusproto.loader.json;
 
 import com.google.gson.JsonElement;
-import com.nukethemoon.tools.opusproto.generator.WorldConfiguration;
+import com.nukethemoon.tools.opusproto.generator.OpusConfiguration;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
 
@@ -16,7 +16,7 @@ public class PersistenceOpus {
 
 	public LayerConfig[] layerConfigs;
 
-	public WorldConfiguration worldConfig;
+	public OpusConfiguration worldConfig;
 
 
 	public static class SamplerConfigEntry {

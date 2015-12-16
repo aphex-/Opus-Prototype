@@ -2,11 +2,16 @@ package com.nukethemoon.tools.opusproto.loader.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.nukethemoon.tools.opusproto.Config;
+import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
+import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
+import com.nukethemoon.tools.opusproto.layer.LayerConfig;
+import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerUnresolvedDependencyException;
-import com.nukethemoon.tools.opusproto.generator.WorldConfiguration;
+import com.nukethemoon.tools.opusproto.generator.OpusConfiguration;
 import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
@@ -17,7 +22,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /**
  * This class loads and saves Opus using a json file.
@@ -71,15 +78,15 @@ public class JsonLoader {
 
 		byte[] bytes = Files.readAllBytes(Paths.get(filePath));
 		PersistenceOpus persistence = gson.fromJson(new String(bytes, CHARSET), PersistenceOpus.class);
-		WorldConfiguration worldConfiguration = persistence.worldConfig;
-		worldConfiguration.seed = Double.parseDouble(worldConfiguration.seedString);
+		OpusConfiguration opusConfiguration = persistence.worldConfig;
+		opusConfiguration.seed = Double.parseDouble(opusConfiguration.seedString);
 
-		AbstractSamplerConfiguration[] samplerConfigList = new AbstractSamplerConfiguration[persistence.samplerConfigs.length];
+		AbstractSamplerConfiguration[] samplerConfigs = new AbstractSamplerConfiguration[persistence.samplerConfigs.length];
 		for (int samplerIndex = 0; samplerIndex < persistence.samplerConfigs.length; samplerIndex++) {
 			PersistenceOpus.SamplerConfigEntry entry = persistence.samplerConfigs[samplerIndex];
-			samplerConfigList[samplerIndex] = gson.fromJson(entry.data, Samplers.getConfigClassByName(entry.type));
+			samplerConfigs[samplerIndex] = gson.fromJson(entry.data, Samplers.getConfigClassByName(entry.type));
 		}
-		samplers.loadSamplers(samplerConfigList, worldConfiguration.seed, algorithms);
+		samplers.loadSamplers(samplerConfigs, opusConfiguration.seed, algorithms);
 
 		for (int interpreterIndex = 0; interpreterIndex < persistence.interpreters.length; interpreterIndex++) {
 			samplers.addInterpreter(persistence.interpreters[interpreterIndex]);
@@ -87,66 +94,69 @@ public class JsonLoader {
 
 		Layer[] layerList = new Layer[persistence.layerConfigs.length];
 		for (int layerIndex = 0; layerIndex < persistence.layerConfigs.length; layerIndex++) {
-			layerList[layerIndex] = new Layer(persistence.layerConfigs[layerIndex], worldConfiguration.seed, samplers);
+			layerList[layerIndex] = new Layer(persistence.layerConfigs[layerIndex], opusConfiguration.seed, samplers);
 		}
-		return new Opus(worldConfiguration, layerList);
+		return new Opus(opusConfiguration, layerList);
 	}
 
-	public void save(Samplers samplers, Opus opus) {
+	/**
+	 * Saves Opus to a json file located at the assigned path.
+	 * @param samplers The Samplers to save.
+	 * @param opus The Opus to save.
+	 * @param saveFilePath The file path to save to.
+	 */
+	public void save(Samplers samplers, Opus opus, String saveFilePath) throws IOException {
 
-		/*if (worldGenerator.getConfig().name == null) {
-			worldGenerator.getConfig().name = saveFilePath;
+		/*if (opus.getConfig().name == null) {
+			opus.getConfig().name = saveFilePath;
 		}
 
-		if (!worldGenerator.getConfig().name.equals(saveFilePath)) {
+		if (!opus.getConfig().name.equals(saveFilePath)) {
 			// project was renamed
 			FileHandle local = Gdx.files.local(Config.PROJECT_PATH + saveFilePath);
-			File file = new File(Config.PROJECT_PATH + worldGenerator.getConfig().name);
+			File file = new File(Config.PROJECT_PATH + opus.getConfig().name);
 			local.file().renameTo(file);
-			saveFilePath = worldGenerator.getConfig().name;
-		}
+			saveFilePath = opus.getConfig().name;
+		}*/
 
-		Save save = new Save();
-		AbstractInterpreter[] interpreterList = samplerLoader.createInterpreterList();
+		PersistenceOpus save = new PersistenceOpus();
+		AbstractInterpreter[] interpreterList = samplers.createInterpreterList();
 		save.interpreters = new ColorInterpreter[interpreterList.length];
 		for (int i = 0; i < interpreterList.length; i++) {
 			save.interpreters[i] = (ColorInterpreter) interpreterList[i];
 		}
 
-
-		AbstractSampler[] samplerList = samplerLoader.createSamplerList();
-		save.samplerConfigs = new Save.SamplerConfigEntry[samplerList.length];
-		for (int i = 0; i < samplerList.length; i++) {
-			save.samplerConfigs[i] = new Save.SamplerConfigEntry(
-					samplerList[i].getConfig().getClass().getSimpleName(),
-					gson.toJsonTree(samplerList[i].getConfig()));
+		AbstractSampler[] samplerList = samplers.createSamplerList();
+		save.samplerConfigs = new PersistenceOpus.SamplerConfigEntry[samplerList.length];
+		for (int samplerIndex = 0; samplerIndex < samplerList.length; samplerIndex++) {
+			save.samplerConfigs[samplerIndex] = new PersistenceOpus.SamplerConfigEntry(
+					samplerList[samplerIndex].getConfig().getClass().getSimpleName(),
+					gson.toJsonTree(samplerList[samplerIndex].getConfig()));
 		}
 
 
-		Layer[] layerList = worldGenerator.getLayers().toArray(new Layer[worldGenerator.getLayers().size()]);
+		Layer[] layerList = opus.getLayers().toArray(new Layer[opus.getLayers().size()]);
 		save.layerConfigs = new LayerConfig[layerList.length];
-		for (int i = 0; i < layerList.length; i++) {
-			save.layerConfigs[i] = (LayerConfig) layerList[i].getConfig();
+		for (int layerIndex = 0; layerIndex < layerList.length; layerIndex++) {
+			save.layerConfigs[layerIndex] = (LayerConfig) layerList[layerIndex].getConfig();
 		}
 
-
-		// save world config
-		WorldConfiguration worldConfig = worldGenerator.getConfig();
-		String[] layerIds = new String[worldGenerator.getLayers().size()];
+		OpusConfiguration opusConfig = opus.getConfig();
+		String[] layerIds = new String[opus.getLayers().size()];
 		for (int i = 0; i < layerIds.length; i++) {
-			layerIds[i] = worldGenerator.getLayers().get(i).getConfig().id;
+			layerIds[i] = opus.getLayers().get(i).getConfig().id;
 		}
-		worldConfig.seedString = worldConfig.seed + "";
-		worldConfig.layerIds = layerIds;
-		save.worldConfig = worldConfig;
+		opusConfig.seedString = opusConfig.seed + "";
+		opusConfig.layerIds = layerIds;
+		save.worldConfig = opusConfig;
 		save.version = Config.VERSION;
 
-		String saveJson = gson.toJson(save, Save.class);
-		byte[] saveBytes = saveJson.getBytes(StandardCharsets.UTF_8);
-		FileHandle saveFile = Gdx.files.local(getSaveFilePath());
-		saveFile.writeBytes(saveBytes, false);
+		String saveJson = gson.toJson(save, PersistenceOpus.class);
+		byte[] saveBytes = saveJson.getBytes(CHARSET);
 
-		//deleteUnused(samplerLoader, worldGenerator);*/
+
+		Files.write(Paths.get(saveFilePath), saveBytes,
+				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 	}
 
 

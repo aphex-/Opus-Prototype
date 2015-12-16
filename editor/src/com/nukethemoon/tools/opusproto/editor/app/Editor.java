@@ -63,7 +63,7 @@ import com.nukethemoon.tools.opusproto.editor.ui.windows.SamplerEditor;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.generator.ChunkListener;
-import com.nukethemoon.tools.opusproto.generator.WorldConfiguration;
+import com.nukethemoon.tools.opusproto.generator.OpusConfiguration;
 import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
@@ -136,7 +136,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	public static String DEFAULT_INTERPRETER_NAME = "EditorDefaultInterpreter";
 
 	private Algorithms algorithms;
-	private WorldConfiguration worldConfiguration;
+	private OpusConfiguration opusConfiguration;
 	private Samplers samplers;
 
 	private Vector3 tmpVector0 = new Vector3();
@@ -332,11 +332,12 @@ public class Editor implements ApplicationListener, ChunkListener {
 			opus = fileOperation.load(samplers, algorithms, Config.PROJECT_PATH + projectName + "/save.json");
 		} catch (Exception e) {
 			Log.e(Editor.class, e.getMessage());
+			showErrorDialog(e);
 			e.printStackTrace();
-			showErrorDialog(e.getMessage());
+			return;
 		}
 
-		worldConfiguration = opus.getConfig();
+		opusConfiguration = opus.getConfig();
 		opus.addRegionListener(this);
 
 		// init a new projects
@@ -344,11 +345,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 			try {
 				LayerConfig config = new LayerConfig("BaseLayer");
 				config.interpreterId = DEFAULT_INTERPRETER_NAME;
-				opus.getLayers().add(new Layer(config, worldConfiguration.seed, samplers));
+				opus.getLayers().add(new Layer(config, opusConfiguration.seed, samplers));
 			} catch (SamplerInvalidConfigException e) {
 				showErrorDialog(e.getMessage());
 			}
-			worldConfiguration.layerIds = new String[]{"BaseLayer"};
+			opusConfiguration.layerIds = new String[]{"BaseLayer"};
 		}
 
 		createEditorDefaultSampler();
@@ -364,16 +365,6 @@ public class Editor implements ApplicationListener, ChunkListener {
 		inputMultiplexer.addProcessor(inputController);
 
 
-		/*SimplePositionConfig msc = new SimplePositionConfig("se");
-		msc.gridSize = worldConfiguration.mapSize;
-		msc.maximumDistance = msc.gridSize / 2;
-		SimplePositionScattering scattering = new SimplePositionScattering(msc, worldConfiguration.seed, algorithms);
-		points = scattering.createPoints(
-				-worldConfiguration.mapSize * 3,
-				-worldConfiguration.mapSize * 3,
-				worldConfiguration.mapSize * 3,
-		 		worldConfiguration.mapSize * 3, worldConfiguration.seed);*/
-
 		clearColor = Color.BLACK;
 
 	}
@@ -382,14 +373,14 @@ public class Editor implements ApplicationListener, ChunkListener {
 		try {
 			samplers.addSampler(
 					new NoiseSampler(new NoiseConfig(DEFAULT_SAMPLER_NAME),
-							worldConfiguration.seed, algorithms, samplers));
+							opusConfiguration.seed, algorithms, samplers));
 
 			MaskedSamplerConfig maskedSamplerConfig = new MaskedSamplerConfig(DEFAULT_MASK_SAMPLER_NAME);
 			maskedSamplerConfig.samplerItems = new ChildSamplerConfig[2];
 			maskedSamplerConfig.samplerItems[0] = new ChildSamplerConfig(DEFAULT_SAMPLER_NAME);
 			maskedSamplerConfig.samplerItems[1] = new ChildSamplerConfig(DEFAULT_SAMPLER_NAME);
 			samplers.addSampler(
-					new MaskedSampler(maskedSamplerConfig, worldConfiguration.seed, algorithms, samplers)
+					new MaskedSampler(maskedSamplerConfig, opusConfiguration.seed, algorithms, samplers)
 			);
 		} catch (SamplerInvalidConfigException e) {
 			showErrorDialog("Error loading editor standard sampler.");
@@ -401,7 +392,13 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@Subscribe
 	@SuppressWarnings("unused")
 	public void save(CommandSaveProject command) {
-		fileOperation.save(samplers, opus);
+		try {
+			fileOperation.save(samplers, opus, "/data/peter");
+		} catch (IOException e) {
+			Log.e(Editor.class, e.getMessage());
+			e.printStackTrace();
+			showErrorDialog(e.getMessage());
+		}
 	}
 
 	@Subscribe
@@ -537,7 +534,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		int highY = y1 > y2 ? y1 : y2;
 
 		commandDrawRectangle = null;
-		if ((highX - lowX) * (highY - lowY) > worldConfiguration.mapSize * (50 * performanceFactor)) {
+		if ((highX - lowX) * (highY - lowY) > opusConfiguration.mapSize * (50 * performanceFactor)) {
 			return;
 		}
 
@@ -819,7 +816,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		if (configClass != null) {
 			try {
 				AbstractSamplerConfiguration o = (AbstractSamplerConfiguration) configClass.getConstructors()[0].newInstance(command.name);
-				AbstractSampler sampler = Samplers.create(o, worldConfiguration.seed, algorithms, samplers);
+				AbstractSampler sampler = Samplers.create(o, opusConfiguration.seed, algorithms, samplers);
 				samplers.addSampler(sampler);
 				Editor.post(new EventSamplerPoolChanged());
 				Editor.post(new CommandOpenSamplerEditor(sampler.getConfig().id));
@@ -947,24 +944,24 @@ public class Editor implements ApplicationListener, ChunkListener {
 		float screenBottom = tmpVector1.y;
 		float screenWidth = Math.abs(screenRight - screenLeft);
 		float screenHeight = Math.abs(screenTop + screenBottom);
-		int linesCountX = (int) ((screenWidth * camera.zoom) / worldConfiguration.mapSize) + 4;
-		int linesCountY = (int) ((screenHeight * camera.zoom) / worldConfiguration.mapSize) + 4;
-		int linesOffsetX = (int) (camera.position.x / worldConfiguration.mapSize);
-		int linesOffsetY = (int) (camera.position.y / worldConfiguration.mapSize);
+		int linesCountX = (int) ((screenWidth * camera.zoom) / opusConfiguration.mapSize) + 4;
+		int linesCountY = (int) ((screenHeight * camera.zoom) / opusConfiguration.mapSize) + 4;
+		int linesOffsetX = (int) (camera.position.x / opusConfiguration.mapSize);
+		int linesOffsetY = (int) (camera.position.y / opusConfiguration.mapSize);
 		if (linesCountX < 100 && linesCountY < 100) {
 			for (int x = -linesCountX / 2; x < linesCountX / 2; x++) {
 				for (int y = -linesCountY / 2; y < linesCountY / 2; y++) {
 					int offsetX = x + linesOffsetX;
 					int offsetY = y + linesOffsetY;
 					// horizontal lines
-					tmpVector0.set(camera.position.x - screenWidth * camera.zoom, worldConfiguration.mapSize * offsetY, 0);
-					tmpVector1.set(camera.position.x + screenWidth * camera.zoom, worldConfiguration.mapSize * offsetY, 0);
+					tmpVector0.set(camera.position.x - screenWidth * camera.zoom, opusConfiguration.mapSize * offsetY, 0);
+					tmpVector1.set(camera.position.x + screenWidth * camera.zoom, opusConfiguration.mapSize * offsetY, 0);
 					camera.project(tmpVector1);
 					camera.project(tmpVector0);
 					screenShapeRenderer.line(tmpVector0.x, tmpVector0.y, tmpVector1.x, tmpVector1.y);
 					// vertical lines
-					tmpVector0.set(worldConfiguration.mapSize * offsetX, camera.position.y - screenHeight * camera.zoom, 0);
-					tmpVector1.set(worldConfiguration.mapSize * offsetX, camera.position.y + screenHeight * camera.zoom, 0);
+					tmpVector0.set(opusConfiguration.mapSize * offsetX, camera.position.y - screenHeight * camera.zoom, 0);
+					tmpVector1.set(opusConfiguration.mapSize * offsetX, camera.position.y + screenHeight * camera.zoom, 0);
 					camera.project(tmpVector1);
 					camera.project(tmpVector0);
 					screenShapeRenderer.line(tmpVector0.x, tmpVector0.y, tmpVector1.x, tmpVector1.y);
@@ -1051,6 +1048,12 @@ public class Editor implements ApplicationListener, ChunkListener {
 		errorDialog.show(STAGE);
 	}
 
+	public static void showErrorDialog(Exception e) {
+		ErrorDialog errorDialog = new ErrorDialog(e.getClass().getSimpleName()
+				+ ": " + e.getMessage(), Styles.UI_SKIN);
+		errorDialog.show(STAGE);
+	}
+
 	@Subscribe
 	@SuppressWarnings("unused")
 	public void renameElement(CommandRenameElement command) {
@@ -1126,7 +1129,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	}
 
 	private void updateWorldName(String name) {
-		worldConfiguration.name = name;
+		opusConfiguration.name = name;
 		ui.getWorldEditor().setWorldName(name);
 		ui.getProjectWindow().setWorldName(name);
 	}

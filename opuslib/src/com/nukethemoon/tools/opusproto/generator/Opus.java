@@ -12,13 +12,13 @@ import java.util.concurrent.ExecutionException;
 
 public class Opus {
 
-	private WorldConfiguration config;
+	private OpusConfiguration config;
 	private List<ChunkListener> chunkListeners = new ArrayList<ChunkListener>();
 
 	private List<Layer> layers = new ArrayList<Layer>();
 	private List<Chunk> chunks = new ArrayList<Chunk>();
 
-	public Opus(WorldConfiguration config, Layer[] layers) {
+	public Opus(OpusConfiguration config, Layer[] layers) {
 		this.config = config;
 		for (int layerIndex = 0; layerIndex < config.layerIds.length; layerIndex++) {
 			String layerId = config.layerIds[layerIndex];
@@ -134,7 +134,7 @@ public class Opus {
 		return null;
 	}
 
-	public WorldConfiguration getConfig() {
+	public OpusConfiguration getConfig() {
 		return config;
 	}
 
