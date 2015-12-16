@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.layer.CommandDeleteLayer;
 import com.nukethemoon.tools.opusproto.editor.message.interpreter.CommandOpenInterpreterEditor;
@@ -26,7 +26,7 @@ import com.nukethemoon.tools.opusproto.editor.ui.dialogs.BaseDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.RenameDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.layer.LayerSamplerList;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
-import com.nukethemoon.tools.opusproto.generator.WorldGenerator;
+import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
@@ -47,10 +47,10 @@ public class LayerEditor extends ClosableWindow implements AbstractChangeForm.Ch
 	private Table samplerContainer;
 	private Skin skin;
 	private final Stage stage;
-	private final SamplerLoader pool;
-	private WorldGenerator generator;
+	private final Samplers pool;
+	private Opus generator;
 
-	public LayerEditor(final Skin skin, Layer layer, final Stage stage, SamplerLoader pool, WorldGenerator generator) {
+	public LayerEditor(final Skin skin, Layer layer, final Stage stage, Samplers pool, Opus generator) {
 		super("LAYER", skin);
 		this.generator = generator;
 		this.layer = layer;

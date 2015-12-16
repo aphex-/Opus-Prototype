@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Util;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandRefreshLayout;
@@ -20,19 +20,19 @@ public class SamplerSelectBoxElement extends AbstractChangeForm {
 	private final SelectBox<AbstractSampler> samplerSelect;
 	private final Image samplerIcon;
 	private SamplerHoverPreviewElement preview;
-	private SamplerLoader samplerLoader;
+	private Samplers samplers;
 
-	public SamplerSelectBoxElement(Skin skin, Stage stage, SamplerLoader samplerLoader,
+	public SamplerSelectBoxElement(Skin skin, Stage stage, Samplers samplers,
 								   boolean showPreview) {
-		this(skin, stage, samplerLoader, showPreview, null);
+		this(skin, stage, samplers, showPreview, null);
 	}
 
-	public SamplerSelectBoxElement(Skin skin, Stage stage, SamplerLoader samplerLoader,
+	public SamplerSelectBoxElement(Skin skin, Stage stage, Samplers samplers,
 			boolean showPreview, Class<? extends AbstractSampler> filterClass) {
 		super(skin);
-		this.samplerLoader = samplerLoader;
+		this.samplers = samplers;
 
-		AbstractSampler[] samplerList = Util.filter(samplerLoader.createSamplerList(), filterClass);
+		AbstractSampler[] samplerList = Util.filter(samplers.createSamplerList(), filterClass);
 
 		samplerIcon = new Image();
 		add(samplerIcon).width(20).height(20);
@@ -48,8 +48,8 @@ public class SamplerSelectBoxElement extends AbstractChangeForm {
 
 		preview = new SamplerHoverPreviewElement(skin, 35, stage);
 		if (samplerList.length > 0) {
-			samplerSelect.setSelected(samplerLoader.getSampler(Editor.DEFAULT_SAMPLER_NAME));
-			preview.applySampler(samplerLoader.getSampler(Editor.DEFAULT_SAMPLER_NAME));
+			samplerSelect.setSelected(samplers.getSampler(Editor.DEFAULT_SAMPLER_NAME));
+			preview.applySampler(samplers.getSampler(Editor.DEFAULT_SAMPLER_NAME));
 		}
 
 		add(samplerSelect);
@@ -85,7 +85,7 @@ public class SamplerSelectBoxElement extends AbstractChangeForm {
 	}
 
 	public void reloadSamplers() {
-		AbstractSampler[] samplerList = samplerLoader.createSamplerList();
+		AbstractSampler[] samplerList = samplers.createSamplerList();
 		samplerSelect.setItems(samplerList);
 	}
 }

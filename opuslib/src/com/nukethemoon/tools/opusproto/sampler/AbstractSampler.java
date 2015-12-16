@@ -1,8 +1,8 @@
 package com.nukethemoon.tools.opusproto.sampler;
 
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 
 public abstract class AbstractSampler implements ISampleable {
@@ -11,13 +11,13 @@ public abstract class AbstractSampler implements ISampleable {
 
 	protected double samplerSeed;
 	protected double worldSeed;
-	protected NoiseAlgorithmPool noisePool;
-	protected SamplerLoader samplerLoader;
+	protected Algorithms noisePool;
+	protected Samplers samplerLoader;
 
 	public boolean active = true;
 
-	public AbstractSampler(AbstractSamplerConfiguration config, double worldSeed, NoiseAlgorithmPool noisePool, SamplerLoader samplerLoader) {
-		this.samplerLoader = samplerLoader;
+	public AbstractSampler(AbstractSamplerConfiguration config, double worldSeed, Algorithms noisePool, Samplers samplers) {
+		this.samplerLoader = samplers;
 		this.noisePool = noisePool;
 		this.config = config;
 		this.worldSeed = worldSeed;
@@ -212,10 +212,10 @@ public abstract class AbstractSampler implements ISampleable {
 		return i * singleStep;
 	}
 
-	public static AbstractSampler[] create(AbstractSamplerConfiguration[] configs, double seed, NoiseAlgorithmPool pool, com.nukethemoon.tools.opusproto.SamplerLoader samplerLoader) {
+	public static AbstractSampler[] create(AbstractSamplerConfiguration[] configs, double seed, Algorithms pool, Samplers samplerLoader) {
 		AbstractSampler[] samplers = new AbstractSampler[configs.length];
 		for (int i = 0; i < configs.length; i++) {
-			samplers[i] = SamplerLoader.create(configs[i], seed, pool, samplerLoader);
+			samplers[i] = Samplers.create(configs[i], seed, pool, samplerLoader);
 		}
 		return samplers;
 	}

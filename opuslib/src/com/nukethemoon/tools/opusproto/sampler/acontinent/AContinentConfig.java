@@ -1,6 +1,6 @@
 package com.nukethemoon.tools.opusproto.sampler.acontinent;
 
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
 
 public class AContinentConfig extends AbstractSamplerConfiguration {
@@ -18,7 +18,7 @@ public class AContinentConfig extends AbstractSamplerConfiguration {
 	public AContinentConfig(String id) {
 		super(id);
 		this.scale = 5;
-		this.noiseAlgorithmName = NoiseAlgorithmPool.NAME_SIMPLEX;
+		this.noiseAlgorithmName = Algorithms.NAME_SIMPLEX;
 		this.worldSeedModifier = 0;
 	}
 }

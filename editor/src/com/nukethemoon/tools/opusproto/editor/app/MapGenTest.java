@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.previews.SamplerPreviewImage;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.noise.algorithms.CellNoise;
 import com.nukethemoon.tools.opusproto.sampler.acontinent.AContinent;
 import com.nukethemoon.tools.opusproto.sampler.acontinent.AContinentConfig;
@@ -74,7 +74,7 @@ public class MapGenTest implements ApplicationListener  {
 	}
 
 	private void initSampler() throws SamplerInvalidConfigException {
-		NoiseAlgorithmPool noisePool = new NoiseAlgorithmPool();
+		Algorithms noisePool = new Algorithms();
 		AContinent m = new AContinent(new AContinentConfig("sd"), 234d, noisePool, null);
 		SamplerPreviewImage previewImage = new SamplerPreviewImage();
 		previewImage.applySampler(m, size, false);
@@ -97,7 +97,7 @@ public class MapGenTest implements ApplicationListener  {
 	private Sprite createDiamondSprite(int xIn, int yIn, int size) {
 		//float[][] map = MidpointDisplacement.createDataMap(xIn, yIn, size, size, 7, 0);
 
-		float[][] map = new CellNoise(new NoiseAlgorithmPool()).createData(xIn, yIn, size, 2344, 1);
+		float[][] map = new CellNoise(new Algorithms()).createData(xIn, yIn, size, 2344, 1);
 
 		Pixmap pixmap = new Pixmap(map.length, map[0].length, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.BLACK);

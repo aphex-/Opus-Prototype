@@ -1,9 +1,9 @@
 package com.nukethemoon.tools.opusproto.sampler.acontinent;
 
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.noise.AbstractNoiseAlgorithm;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.combined.Combined;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
@@ -17,8 +17,8 @@ public class AContinent extends AbstractSampler {
 
 	private double[] seeds;
 
-	public AContinent(AbstractSamplerConfiguration config, double worldSeed, NoiseAlgorithmPool noisePool, SamplerLoader samplerLoader) throws SamplerInvalidConfigException {
-		super(config, worldSeed, noisePool, samplerLoader);
+	public AContinent(AbstractSamplerConfiguration config, double worldSeed, Algorithms noisePool, Samplers samplers) throws SamplerInvalidConfigException {
+		super(config, worldSeed, noisePool, samplers);
 		c = (AContinentConfig) config;
 		init();
 	}

@@ -9,20 +9,20 @@ import com.nukethemoon.tools.opusproto.editor.ui.dialogs.ErrorDialog;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.tools.Log;
 
 public abstract class AbstractSamplerForm extends AbstractChangeForm {
 
 
 	protected final Table contentTable;
-	protected SamplerLoader samplerLoader;
+	protected Samplers samplers;
 	protected AbstractSampler sampler;
 
 
-	public AbstractSamplerForm(final Skin skin, final AbstractSampler sampler, SamplerLoader pool) {
+	public AbstractSamplerForm(final Skin skin, final AbstractSampler sampler, Samplers pool) {
 		super(skin);
-		this.samplerLoader = pool;
+		this.samplers = pool;
 		this.sampler = sampler;
 		left().top();
 		contentTable = new Table(skin);
@@ -40,7 +40,7 @@ public abstract class AbstractSamplerForm extends AbstractChangeForm {
 			return false;
 		}
 		try {
-			if (samplerLoader.doesSecondDependOnFirst(parent, child)) {
+			if (samplers.doesSecondDependOnFirst(parent, child)) {
 				ErrorDialog dialog = new ErrorDialog("You can not select this sampler. It would create a circular dependency.", Styles.UI_SKIN);
 				dialog.show(Editor.STAGE);
 				return false;

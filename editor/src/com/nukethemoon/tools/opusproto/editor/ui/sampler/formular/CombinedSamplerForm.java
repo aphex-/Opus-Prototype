@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.layer.EventLayersChanged;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
@@ -36,11 +36,11 @@ public class CombinedSamplerForm extends AbstractSamplerForm {
 	private List<SamplerChildForm> samplerForms = new ArrayList<SamplerChildForm>();
 
 	private Skin skin;
-	private SamplerLoader pool;
+	private Samplers pool;
 
 	private Table subSamplerContainer;
 
-	public CombinedSamplerForm(Skin skin, AbstractSampler pSampler, final SamplerLoader pool) {
+	public CombinedSamplerForm(Skin skin, AbstractSampler pSampler, final Samplers pool) {
 		super(skin, null, pool);
 		this.pool = pool;
 		this.skin = skin;
@@ -55,7 +55,7 @@ public class CombinedSamplerForm extends AbstractSamplerForm {
 		addButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				addSampler(samplerLoader.getSampler(Editor.DEFAULT_SAMPLER_NAME));
+				addSampler(samplers.getSampler(Editor.DEFAULT_SAMPLER_NAME));
 			}
 		});
 		titleTable.add(addButton).right();
@@ -102,7 +102,7 @@ public class CombinedSamplerForm extends AbstractSamplerForm {
 
 	private void createSamplerEntry(ChildSamplerConfig itemConfig, final int index) {
 
-		final SamplerChildForm samplerChildForm = new SamplerChildForm(skin, samplerLoader.getSampler(itemConfig.samplerReferenceId),
+		final SamplerChildForm samplerChildForm = new SamplerChildForm(skin, samplers.getSampler(itemConfig.samplerReferenceId),
 				Editor.STAGE, pool, itemConfig);
 
 		samplerChildForm.setSamplerModListener(new SamplerChildForm.SamplerModListener() {

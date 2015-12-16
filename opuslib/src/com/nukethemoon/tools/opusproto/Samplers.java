@@ -5,7 +5,7 @@ import com.nukethemoon.tools.opusproto.exceptions.SamplerUnresolvedDependencyExc
 import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerContainerConfig;
@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SamplerLoader {
+public class Samplers {
 
 	private List<AbstractSampler> loadedSamplers = new ArrayList<AbstractSampler>();
 	private List<AbstractInterpreter> loadedInterpreter = new ArrayList<AbstractInterpreter>();
@@ -52,7 +52,7 @@ public class SamplerLoader {
 	 * @throws SamplerRecursionException
 	 * @throws SamplerUnresolvedDependencyException
 	 */
-	public void loadSamplers(AbstractSamplerConfiguration[] configs, double seed, NoiseAlgorithmPool pool)
+	public void loadSamplers(AbstractSamplerConfiguration[] configs, double seed, Algorithms pool)
 			throws SamplerRecursionException, SamplerUnresolvedDependencyException {
 
 		// first run: load samplers without child dependencies
@@ -149,25 +149,25 @@ public class SamplerLoader {
 	 * @param config The config to create a sampler for.
 	 * @param seed The world seed.
 	 * @param noisePool The noise pool.
-	 * @param samplerLoader The sampler loader.
+	 * @param samplers The sampler loader.
 	 * @return The created sampler.
 	 */
-	public static AbstractSampler create(AbstractSamplerConfiguration config, double seed, NoiseAlgorithmPool noisePool, SamplerLoader samplerLoader) {
+	public static AbstractSampler create(AbstractSamplerConfiguration config, double seed, Algorithms noisePool, Samplers samplers) {
 		Class<? extends AbstractSampler> samplerClass = getSamplerClass(config.getClass());
 		try {
-			return (AbstractSampler) samplerClass.getConstructors()[0].newInstance(config, seed, noisePool, samplerLoader);
+			return (AbstractSampler) samplerClass.getConstructors()[0].newInstance(config, seed, noisePool, samplers);
 		} catch (InstantiationException e) {
-			Log.e(SamplerLoader.class, e.getMessage());
+			Log.e(Samplers.class, e.getMessage());
 		} catch (IllegalAccessException e) {
-			Log.e(SamplerLoader.class, e.getMessage());
+			Log.e(Samplers.class, e.getMessage());
 		} catch (InvocationTargetException e) {
-			Log.e(SamplerLoader.class, e.getMessage());
+			Log.e(Samplers.class, e.getMessage());
 		}
 		return null;
 	}
 
 	public static Class<? extends AbstractSamplerConfiguration> getConfigClassByName(String name) {
-		for(Class<? extends  AbstractSamplerConfiguration> c : SamplerLoader.SAMPLER_TO_CONFIG.values()) {
+		for(Class<? extends  AbstractSamplerConfiguration> c : Samplers.SAMPLER_TO_CONFIG.values()) {
 			if (c.getSimpleName().equals(name)) {
 				return c;
 			}
@@ -237,11 +237,11 @@ public class SamplerLoader {
 
 	public void addSampler(AbstractSampler sampler) {
 		if (getSampler(sampler.getConfig().id) != null) {
-			Log.i(SamplerLoader.class, "Sampler can not be added. Id already exists + " + sampler.getConfig().id);
+			Log.i(Samplers.class, "Sampler can not be added. Id already exists + " + sampler.getConfig().id);
 			return;
 		}
 		loadedSamplers.add(sampler);
-		Log.d(SamplerLoader.class, "Loaded sampler " + sampler.getConfig().id);
+		Log.d(Samplers.class, "Loaded sampler " + sampler.getConfig().id);
 	}
 
 
@@ -318,7 +318,7 @@ public class SamplerLoader {
 		if (getInterpreter(interpreter.id) == null) {
 			loadedInterpreter.add(interpreter);
 		} else {
-			Log.i(SamplerLoader.class, "Interpreter can not be added. Id already exists + " + interpreter.id);
+			Log.i(Samplers.class, "Interpreter can not be added. Id already exists + " + interpreter.id);
 		}
 
 	}

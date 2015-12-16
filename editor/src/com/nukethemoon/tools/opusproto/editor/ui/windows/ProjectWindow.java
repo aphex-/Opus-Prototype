@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Util;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandLimitWindowSizes;
@@ -20,7 +20,7 @@ import com.nukethemoon.tools.opusproto.editor.message.sampler.EventSamplerPoolCh
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 import com.nukethemoon.tools.opusproto.editor.ui.TreeExpansionListener;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.NewLayerDialog;
-import com.nukethemoon.tools.opusproto.generator.WorldGenerator;
+import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
@@ -37,13 +37,13 @@ public class ProjectWindow extends ClosableWindow implements TreeExpansionListen
 
 	private final Tree tree;
 	private Skin skin;
-	private WorldGenerator generator;
-	private SamplerLoader loader;
+	private Opus generator;
+	private Samplers loader;
 	private final Label worldName;
 
 	private Tree.Node selectedNode = null;
 
-	public ProjectWindow(Skin skin, final WorldGenerator generator, final SamplerLoader loader) {
+	public ProjectWindow(Skin skin, final Opus generator, final Samplers loader) {
 		super("Project", skin);
 		this.skin = skin;
 		this.generator = generator;
@@ -118,14 +118,14 @@ public class ProjectWindow extends ClosableWindow implements TreeExpansionListen
 		}
 	}
 
-	private void loadTree(WorldGenerator worldGenerator, SamplerLoader loader) {
+	private void loadTree(Opus opus, Samplers loader) {
 		if (tree.getNodes() != null) {
 			for (Tree.Node n : tree.getNodes()) {
 				memory(n);
 			}
 		}
 		tree.clearChildren();
-		for (Layer l : worldGenerator.getLayers()) {
+		for (Layer l : opus.getLayers()) {
 			addLayer(l);
 		}
 		tree.pack();

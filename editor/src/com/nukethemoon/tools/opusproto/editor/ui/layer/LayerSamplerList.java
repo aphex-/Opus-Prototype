@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.ui.AbstractChangeForm;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
@@ -29,18 +29,18 @@ public class LayerSamplerList extends AbstractChangeForm {
 
 	private Skin skin;
 	private Stage stage;
-	private SamplerLoader samplerLoader;
+	private Samplers samplers;
 	private Layer layer;
 
 	private Table container;
 
 	public LayerSamplerList(Skin skin, final Layer layer,
-							Stage stage, SamplerLoader samplerLoader) {
+							Stage stage, Samplers samplers) {
 		super(skin);
 		this.layer = layer;
 
 		this.stage = stage;
-		this.samplerLoader = samplerLoader;
+		this.samplers = samplers;
 		this.skin = skin;
 		defaults().pad(2);
 
@@ -83,7 +83,7 @@ public class LayerSamplerList extends AbstractChangeForm {
 
 		LayerConfig config = (LayerConfig) layer.getConfig();
 
-		final SamplerChildForm samplerChildForm = new SamplerChildForm(skin, sampler, stage, samplerLoader, null, MaskedSampler.class);
+		final SamplerChildForm samplerChildForm = new SamplerChildForm(skin, sampler, stage, samplers, null, MaskedSampler.class);
 
 		samplerChildForm.addChangedListener(new AbstractChangeForm.ChangedListener() {
 			@Override
@@ -168,7 +168,7 @@ public class LayerSamplerList extends AbstractChangeForm {
 		container.clear();
 		LayerConfig config = (LayerConfig) layer.getConfig();
 		for (int i = 0; i < config.samplerItems.length; i++) {
-			final AbstractSampler sampler = samplerLoader.getSampler(config.samplerItems[i].samplerReferenceId);
+			final AbstractSampler sampler = samplers.getSampler(config.samplerItems[i].samplerReferenceId);
 			addMaskedSamplerEntry(sampler, i);
 		}
 		notifyChanges();

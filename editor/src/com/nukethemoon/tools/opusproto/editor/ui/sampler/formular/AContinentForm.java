@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.AbstractSamplerForm;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.InputTable;
@@ -22,7 +22,7 @@ public class AContinentForm extends AbstractSamplerForm {
 	private final String NAME_EDGE = "edge";
 	private final CheckBox cbSmoothEdge;
 
-	public AContinentForm(Skin skin, AbstractSampler sampler, SamplerLoader pool) {
+	public AContinentForm(Skin skin, AbstractSampler sampler, Samplers pool) {
 		super(skin, sampler, pool);
 
 		inputTable = new InputTable(skin);

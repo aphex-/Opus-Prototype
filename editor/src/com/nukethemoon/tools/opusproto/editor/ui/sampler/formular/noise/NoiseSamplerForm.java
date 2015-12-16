@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.AbstractSamplerForm;
@@ -19,7 +19,7 @@ public class NoiseSamplerForm extends AbstractSamplerForm {
 	private final SelectBox algorithmSelect;
 	private Skin skin;
 
-	public NoiseSamplerForm(Skin skin, AbstractSampler sampler, SamplerLoader pool) {
+	public NoiseSamplerForm(Skin skin, AbstractSampler sampler, Samplers pool) {
 		super(skin, sampler, pool);
 		this.skin = skin;
 		defaults().center().pad(5);

@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Util;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandGenerateWorld;
@@ -33,7 +33,7 @@ import com.nukethemoon.tools.opusproto.editor.ui.sampler.Notifyable;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.RangeTable;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.previews.SamplerPreviewImage;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
 import com.nukethemoon.tools.opusproto.tools.Log;
@@ -60,7 +60,7 @@ public class SamplerEditor extends ClosableWindow implements AbstractChangeForm.
 	private Table concreteSettings;
 	private Table modifier;
 
-	private SamplerLoader samplerLoader;
+	private Samplers samplers;
 	private Skin skin;
 	private AbstractSampler sampler;
 
@@ -68,10 +68,10 @@ public class SamplerEditor extends ClosableWindow implements AbstractChangeForm.
 	private static final int PREVIEW_SIZE = 200;
 
 	public SamplerEditor(final Skin skin, final Stage stage,
-						NoiseAlgorithmPool noisePool, SamplerLoader samplerLoader) {
+						 Algorithms noisePool, Samplers samplerLoader) {
 		super("SAMPLER EDITOR", skin);
 		this.skin = skin;
-		this.samplerLoader = samplerLoader;
+		this.samplers = samplerLoader;
 		this.sampler = samplerLoader.getSampler(Editor.DEFAULT_SAMPLER_NAME);
 
 		defaults().pad(4).top();
@@ -242,7 +242,7 @@ public class SamplerEditor extends ClosableWindow implements AbstractChangeForm.
 		editor = null;
 		try {
 			editor = (AbstractSamplerForm)
-					aClass.getConstructors()[0].newInstance(this.skin, sampler, samplerLoader);
+					aClass.getConstructors()[0].newInstance(this.skin, sampler, samplers);
 		} catch (InvocationTargetException e) {
 			Log.e(SamplerEditor.class, e.getClass().getSimpleName() + " Cause: " + e.getCause().getMessage());
 			e.getCause().printStackTrace();
@@ -327,9 +327,9 @@ public class SamplerEditor extends ClosableWindow implements AbstractChangeForm.
 		if (!this.isVisible()) {
 			this.setVisible(true);
 		}
-		AbstractSampler sampler = samplerLoader.getSampler(command.samplerId);
+		AbstractSampler sampler = samplers.getSampler(command.samplerId);
 		if (sampler == null) {
-			sampler = samplerLoader.getSampler(Editor.DEFAULT_SAMPLER_NAME);
+			sampler = samplers.getSampler(Editor.DEFAULT_SAMPLER_NAME);
 		}
 		onSelectionChange(sampler);
 		toFront();
@@ -339,7 +339,7 @@ public class SamplerEditor extends ClosableWindow implements AbstractChangeForm.
 	@SuppressWarnings("unused")
 	public void reloadSamplers(EventSamplerPoolChanged command) {
 		// if the sampler was deleted
-		if (samplerLoader.getSampler(sampler.getConfig().id) == null) {
+		if (samplers.getSampler(sampler.getConfig().id) == null) {
 			this.setVisible(false);
 		} else {
 			onChange();

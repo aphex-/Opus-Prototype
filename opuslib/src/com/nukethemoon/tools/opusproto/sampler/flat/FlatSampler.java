@@ -1,8 +1,8 @@
 package com.nukethemoon.tools.opusproto.sampler.flat;
 
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
@@ -11,8 +11,8 @@ public class FlatSampler extends AbstractSampler {
 
 	private FlatSamplerConfig flatSamplerConfig;
 
-	public FlatSampler(AbstractSamplerConfiguration config, double seed, NoiseAlgorithmPool pool, SamplerLoader samplerLoader) throws SamplerInvalidConfigException {
-		super(config, seed, pool, samplerLoader);
+	public FlatSampler(AbstractSamplerConfiguration config, double seed, Algorithms pool, Samplers samplers) throws SamplerInvalidConfigException {
+		super(config, seed, pool, samplers);
 		flatSamplerConfig = (FlatSamplerConfig) config;
 		init();
 	}

@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.interpreter.CommandDeleteInterpreter;
 import com.nukethemoon.tools.opusproto.editor.message.interpreter.CommandOpenInterpreterEditor;
@@ -21,9 +21,9 @@ public class ColorInterpreterList extends ClosableWindow {
 
 	private final Label labelTitle;
 	private Table container;
-	private SamplerLoader loader;
+	private Samplers loader;
 
-	public ColorInterpreterList(final Skin skin, SamplerLoader loader) {
+	public ColorInterpreterList(final Skin skin, Samplers loader) {
 		super("INTERPRETER LIST", skin);
 		this.loader = loader;
 		top().left();

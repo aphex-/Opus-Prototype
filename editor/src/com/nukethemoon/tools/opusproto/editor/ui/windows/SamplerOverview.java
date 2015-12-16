@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Util;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandLimitWindowSizes;
@@ -30,13 +30,13 @@ public class SamplerOverview extends ClosableWindow {
 	private final Table samplerContainer;
 
 	private HashMap<String, SamplerOverViewItem> samplerMap = new HashMap<String, SamplerOverViewItem>();
-	private SamplerLoader pool;
+	private Samplers pool;
 
 	private Comparator<AbstractSampler> currentComparator;
 	private final Comparator<AbstractSampler> nameComparator;
 	private final Comparator<AbstractSampler> classComparator;
 
-	public SamplerOverview(final Skin skin, final Stage stage, SamplerLoader pool) {
+	public SamplerOverview(final Skin skin, final Stage stage, Samplers pool) {
 		super("SAMPLER LIST", skin);
 		this.pool = pool;
 		defaults().pad(2);

@@ -1,8 +1,8 @@
 package com.nukethemoon.tools.opusproto.sampler.masked;
 
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
@@ -16,8 +16,8 @@ public class MaskedSampler extends AbstractSampler {
 	private float maskScaleMod = 1;
 	private float sampleScaleMod = 1;
 
-	public MaskedSampler(AbstractSamplerConfiguration config, double worldSeed, NoiseAlgorithmPool noisePool, SamplerLoader samplerLoader) throws SamplerInvalidConfigException {
-		super(config, worldSeed, noisePool, samplerLoader);
+	public MaskedSampler(AbstractSamplerConfiguration config, double worldSeed, Algorithms noisePool, Samplers samplers) throws SamplerInvalidConfigException {
+		super(config, worldSeed, noisePool, samplers);
 		maskedSamplerConfig = (MaskedSamplerConfig) config;
 		init();
 	}

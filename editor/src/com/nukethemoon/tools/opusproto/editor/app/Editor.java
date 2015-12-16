@@ -21,7 +21,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.nukethemoon.tools.ani.Ani;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 import com.nukethemoon.tools.ani.BaseAnimation;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Config;
 import com.nukethemoon.tools.opusproto.editor.InputController;
 import com.nukethemoon.tools.opusproto.editor.Settings;
@@ -64,14 +64,14 @@ import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.generator.ChunkListener;
 import com.nukethemoon.tools.opusproto.generator.WorldConfiguration;
-import com.nukethemoon.tools.opusproto.generator.WorldGenerator;
+import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
 import com.nukethemoon.tools.opusproto.loader.json.JsonLoader;
 import com.nukethemoon.tools.opusproto.noise.AbstractNoiseAlgorithm;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.noise.algorithms.CellNoise;
 import com.nukethemoon.tools.opusproto.noise.algorithms.DiamondSquare;
 import com.nukethemoon.tools.opusproto.noise.algorithms.SimplexNoise;
@@ -122,7 +122,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	private static LwjglApplicationConfiguration cfg;
 	private UI ui;
 
-	private WorldGenerator worldGenerator;
+	private Opus opus;
 
 	private int windowWidth;
 	private int windowHeight;
@@ -135,9 +135,9 @@ public class Editor implements ApplicationListener, ChunkListener {
 	public static String DEFAULT_MASK_SAMPLER_NAME = "EditorDefaultMask";
 	public static String DEFAULT_INTERPRETER_NAME = "EditorDefaultInterpreter";
 
-	private NoiseAlgorithmPool noisePool;
+	private Algorithms noisePool;
 	private WorldConfiguration worldConfiguration;
-	private SamplerLoader samplerLoader;
+	private Samplers samplers;
 
 	private Vector3 tmpVector0 = new Vector3();
 	private Vector3 tmpVector1 = new Vector3();
@@ -323,28 +323,28 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 		fileOperation = new JsonLoader();
 
-		noisePool = new NoiseAlgorithmPool();
-		samplerLoader = new SamplerLoader();
+		noisePool = new Algorithms();
+		samplers = new Samplers();
 
-		samplerLoader.addInterpreter(new ColorInterpreter(DEFAULT_INTERPRETER_NAME));
+		samplers.addInterpreter(new ColorInterpreter(DEFAULT_INTERPRETER_NAME));
 
 		try {
-			worldGenerator = fileOperation.load(samplerLoader, noisePool, Config.PROJECT_PATH + projectName + "/save.json");
+			opus = fileOperation.load(samplers, noisePool, Config.PROJECT_PATH + projectName + "/save.json");
 		} catch (Exception e) {
 			Log.e(Editor.class, e.getMessage());
 			e.printStackTrace();
 			showErrorDialog(e.getMessage());
 		}
 
-		worldConfiguration = worldGenerator.getConfig();
-		worldGenerator.addRegionListener(this);
+		worldConfiguration = opus.getConfig();
+		opus.addRegionListener(this);
 
 		// init a new projects
-		if (worldGenerator.getLayers().size() == 0) {
+		if (opus.getLayers().size() == 0) {
 			try {
 				LayerConfig config = new LayerConfig("BaseLayer");
 				config.interpreterId = DEFAULT_INTERPRETER_NAME;
-				worldGenerator.getLayers().add(new Layer(config, worldConfiguration.seed, samplerLoader));
+				opus.getLayers().add(new Layer(config, worldConfiguration.seed, samplers));
 			} catch (SamplerInvalidConfigException e) {
 				showErrorDialog(e.getMessage());
 			}
@@ -353,14 +353,14 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 		createEditorDefaultSampler();
 
-		ui = new UI(STAGE, cfg, worldGenerator, noisePool, samplerLoader, bus, Styles.UI_SKIN, settings);
+		ui = new UI(STAGE, cfg, opus, noisePool, samplers, bus, Styles.UI_SKIN, settings);
 		bus.register(ui);
 
-		generate(worldGenerator);
+		generate(opus);
 
 		worldRenderEnabled = true;
 
-		inputController = new InputController(STAGE, camera, ui, worldGenerator, cfg);
+		inputController = new InputController(STAGE, camera, ui, opus, cfg);
 		inputMultiplexer.addProcessor(inputController);
 
 
@@ -380,16 +380,16 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	private void createEditorDefaultSampler() {
 		try {
-			samplerLoader.addSampler(
+			samplers.addSampler(
 					new NoiseSampler(new NoiseConfig(DEFAULT_SAMPLER_NAME),
-							worldConfiguration.seed, noisePool, samplerLoader));
+							worldConfiguration.seed, noisePool, samplers));
 
 			MaskedSamplerConfig maskedSamplerConfig = new MaskedSamplerConfig(DEFAULT_MASK_SAMPLER_NAME);
 			maskedSamplerConfig.samplerItems = new ChildSamplerConfig[2];
 			maskedSamplerConfig.samplerItems[0] = new ChildSamplerConfig(DEFAULT_SAMPLER_NAME);
 			maskedSamplerConfig.samplerItems[1] = new ChildSamplerConfig(DEFAULT_SAMPLER_NAME);
-			samplerLoader.addSampler(
-					new MaskedSampler(maskedSamplerConfig, worldConfiguration.seed, noisePool, samplerLoader)
+			samplers.addSampler(
+					new MaskedSampler(maskedSamplerConfig, worldConfiguration.seed, noisePool, samplers)
 			);
 		} catch (SamplerInvalidConfigException e) {
 			showErrorDialog("Error loading editor standard sampler.");
@@ -401,7 +401,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@Subscribe
 	@SuppressWarnings("unused")
 	public void save(CommandSaveProject command) {
-		fileOperation.save(samplerLoader, worldGenerator);
+		fileOperation.save(samplers, opus);
 	}
 
 	@Subscribe
@@ -414,7 +414,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 				String name = (String) result;
 				if (isValidName(name)) {
 					if (!Gdx.files.local(Config.PROJECT_PATH  + name).exists()) {
-						fileOperation.saveAs(samplerLoader, worldGenerator, name);
+						fileOperation.saveAs(samplers, opus, name);
 						updateWorldName(name);
 					} else {
 						showErrorDialog("Can not save as " + name + ". A project with this name exists already.");
@@ -434,9 +434,9 @@ public class Editor implements ApplicationListener, ChunkListener {
 		try {
 			LayerConfig config = new LayerConfig(command.layerId);
 			config.interpreterId = DEFAULT_INTERPRETER_NAME;
-			Layer layer = new Layer(config, worldGenerator.getConfig().seed, samplerLoader);
+			Layer layer = new Layer(config, opus.getConfig().seed, samplers);
 			layerToSprites.put(layer, new ArrayList<Sprite>());
-			worldGenerator.getLayers().add(layer);
+			opus.getLayers().add(layer);
 			Editor.post(new EventLayersChanged());
 
 		} catch (SamplerInvalidConfigException e) {
@@ -471,16 +471,16 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@SuppressWarnings("unused")
 	public void update(CommandGenerateWorld command) {
 		if (command.force || settings.autoRefresh) {
-			worldGenerator.clear();
+			opus.clear();
 
-			for (Layer l : worldGenerator.getLayers()) {
+			for (Layer l : opus.getLayers()) {
 				for (Sprite s : layerToSprites.get(l)) {
 					s.getTexture().dispose();
 				}
 			}
 
 			layerToSprites.clear();
-			generate(worldGenerator);
+			generate(opus);
 		}
 	}
 
@@ -488,12 +488,12 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@SuppressWarnings("unused")
 	public void deleteLayer(CommandDeleteLayer command) {
 		Layer layerToDelete = null;
-		for (Layer l : worldGenerator.getLayers()) {
+		for (Layer l : opus.getLayers()) {
 			if (l.getConfig().id.equals(command.layerId)) {
 				layerToDelete = l;
 			}
 		}
-		worldGenerator.getLayers().remove(layerToDelete);
+		opus.getLayers().remove(layerToDelete);
 		Editor.post(new EventLayersChanged());
 	}
 
@@ -507,7 +507,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@Subscribe
 	@SuppressWarnings("unused")
 	public void takeSnapshot(CommandSnapshotBySampler command) {
-		AbstractSampler sampler = samplerLoader.getSampler(command.id);
+		AbstractSampler sampler = samplers.getSampler(command.id);
 		takeSnapshot(sampler, command.drawBehind, command.opacity);
 	}
 
@@ -592,11 +592,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 		samplerSnapshot.setAlpha(command.opacity);
 	}
 
-	private void generate(WorldGenerator world) {
+	private void generate(Opus world) {
 		int startSize = 1;
 
 		layerToSprites.clear();
-		for (Layer l : worldGenerator.getLayers()) {
+		for (Layer l : opus.getLayers()) {
 			if (layerToSprites.get(l) == null) {
 				layerToSprites.put(l, new ArrayList<Sprite>());
 			}
@@ -622,7 +622,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	private void requestMap(int x[], int y[]) {
 		try {
-			worldGenerator.requestChunks(x, y);
+			opus.requestChunks(x, y);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -642,7 +642,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 		SimpleTaskExecutor<Pixmap> executor = new SimpleTaskExecutor<Pixmap>();
 
-		for (int layerIndex = 0; layerIndex < worldGenerator.getLayers().size(); layerIndex++) {
+		for (int layerIndex = 0; layerIndex < opus.getLayers().size(); layerIndex++) {
 			final int finalLayerIndex = layerIndex;
 			executor.addTask(new Callable<Pixmap>() {
 				@Override
@@ -655,7 +655,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 					Sprite sprite = new Sprite(new Texture(result));
 					result.dispose();
 					sprite.setPosition(chunk.getOffsetX(), chunk.getOffsetY());
-					Layer layer = worldGenerator.getLayers().get(finalLayerIndex);
+					Layer layer = opus.getLayers().get(finalLayerIndex);
 					layerToSprites.get(layer).add(sprite);
 				}
 			});
@@ -673,12 +673,12 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 
 	public Pixmap createPixmap(float data[][], int layerIndex) {
-		AbstractInterpreter interpreter = worldGenerator.getLayers().get(layerIndex).getInterpreter();
-		Pixmap pixmap = new Pixmap(worldGenerator.getConfig().mapSize, worldGenerator.getConfig().mapSize, Pixmap.Format.RGBA8888);
+		AbstractInterpreter interpreter = opus.getLayers().get(layerIndex).getInterpreter();
+		Pixmap pixmap = new Pixmap(opus.getConfig().mapSize, opus.getConfig().mapSize, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.BLACK);
-		for (int x = 0; x < worldGenerator.getConfig().mapSize; x++) {
-			for (int y = 0; y < worldGenerator.getConfig().mapSize; y++) {
-				float noise = data[x ][(worldGenerator.getConfig().mapSize - 1) - y];
+		for (int x = 0; x < opus.getConfig().mapSize; x++) {
+			for (int y = 0; y < opus.getConfig().mapSize; y++) {
+				float noise = data[x ][(opus.getConfig().mapSize - 1) - y];
 				pixmap.drawPixel(x, y, interpreter.getType(noise));
 			}
 		}
@@ -718,7 +718,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 		try {
 			List<String> dependencies = new ArrayList<String>();
-			if (samplerLoader.doesASamplerDependOn(samplerLoader.getSampler(command.samplerId), dependencies)) {
+			if (samplers.doesASamplerDependOn(samplers.getSampler(command.samplerId), dependencies)) {
 				showDependencyError(dependencies, "Sampler");
 				return;
 			}
@@ -730,13 +730,13 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 		try {
 			List<String> dependencies = new ArrayList<String>();
-			if (samplerLoader.doesASamplerDependOn(samplerLoader.getSampler(command.samplerId),
-					toAbstract(worldGenerator.getLayers()), dependencies, 0)) {
+			if (samplers.doesASamplerDependOn(samplers.getSampler(command.samplerId),
+					toAbstract(opus.getLayers()), dependencies, 0)) {
 				showDependencyError(dependencies, "Layer");
 				return;
 			}
 
-			samplerLoader.removeSampler(command.samplerId);
+			samplers.removeSampler(command.samplerId);
 			Editor.post(new EventSamplerPoolChanged());
 
 		} catch (SamplerRecursionException e) {
@@ -769,11 +769,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 			showErrorDialog("You can not delete the default interpreter.");
 		}
 
-		if (samplerLoader.doesALayerDependOn(samplerLoader.getInterpreter(command.id), worldGenerator.getLayers())) {
+		if (samplers.doesALayerDependOn(samplers.getInterpreter(command.id), opus.getLayers())) {
 			showErrorDialog("You can not delete this interpreter. It is used in a layer.");
 			return;
 		}
-		samplerLoader.removeInterpreter(command.id);
+		samplers.removeInterpreter(command.id);
 		Editor.post(new EventInterpreterPoolChanged());
 	}
 
@@ -802,7 +802,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@SuppressWarnings("unused")
 	public void createNewSampler(CommandCreateSampler command) {
 
-		AbstractSampler s = samplerLoader.getSampler(command.name);
+		AbstractSampler s = samplers.getSampler(command.name);
 		if (s != null) {
 			ErrorDialog errorDialog = new ErrorDialog("Can not create a sampler with the id " + command.name + ". This id is already used.", Styles.UI_SKIN);
 			errorDialog.show(STAGE);
@@ -810,7 +810,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		}
 
 		Class<? extends AbstractSamplerConfiguration> configClass = null;
-		for (java.util.Map.Entry<Class<? extends AbstractSampler>, Class<? extends AbstractSamplerConfiguration>> entry : SamplerLoader.SAMPLER_TO_CONFIG.entrySet()) {
+		for (java.util.Map.Entry<Class<? extends AbstractSampler>, Class<? extends AbstractSamplerConfiguration>> entry : Samplers.SAMPLER_TO_CONFIG.entrySet()) {
 			if (entry.getKey().getSimpleName().toLowerCase().equals(command.type.toLowerCase())) {
 				configClass = entry.getValue();
 			}
@@ -819,8 +819,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 		if (configClass != null) {
 			try {
 				AbstractSamplerConfiguration o = (AbstractSamplerConfiguration) configClass.getConstructors()[0].newInstance(command.name);
-				AbstractSampler sampler = SamplerLoader.create(o, worldConfiguration.seed, noisePool, samplerLoader);
-				samplerLoader.addSampler(sampler);
+				AbstractSampler sampler = Samplers.create(o, worldConfiguration.seed, noisePool, samplers);
+				samplers.addSampler(sampler);
 				Editor.post(new EventSamplerPoolChanged());
 				Editor.post(new CommandOpenSamplerEditor(sampler.getConfig().id));
 			} catch (Exception e) {
@@ -852,7 +852,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			if (samplerSnapshot != null && samplerSnapshotDrawBehind) {
 				samplerSnapshot.draw(batch);
 			}
-			for (Layer l : worldGenerator.getLayers()) {
+			for (Layer l : opus.getLayers()) {
 				for (Sprite sprite : layerToSprites.get(l)) {
 					sprite.draw(batch);
 				}
@@ -1010,7 +1010,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 
 	private int worldToMap(float coordinate) {
-		int x = (int) (coordinate / worldGenerator.getConfig().mapSize);
+		int x = (int) (coordinate / opus.getConfig().mapSize);
 		if (coordinate < 0) {
 			x = x-1;
 		}
@@ -1064,7 +1064,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		}
 
 		if (command.type == CommandRenameElement.ElementType.Sampler) {
-			if (samplerLoader.getSampler(command.newName) != null) {
+			if (samplers.getSampler(command.newName) != null) {
 				showErrorDialog("A sampler with the name " + command.newName + " exists already.");
 				return;
 			}
@@ -1074,11 +1074,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 			}
 
 
-			samplerLoader.changeId(command.oldName, command.newName);
+			samplers.changeId(command.oldName, command.newName);
 
-			for (Layer layer : worldGenerator.getLayers()) {
+			for (Layer layer : opus.getLayers()) {
 				//Layer.LayerConfig config = (Layer.LayerConfig) layer.getConfig();
-				samplerLoader.changeId(layer, command.oldName, command.newName);
+				samplers.changeId(layer, command.oldName, command.newName);
 				try {
 					layer.init();
 				} catch (SamplerInvalidConfigException e) {
@@ -1091,11 +1091,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 		}
 
 		if (command.type == CommandRenameElement.ElementType.Layer) {
-			if (worldGenerator.getLayer(command.newName) != null) {
+			if (opus.getLayer(command.newName) != null) {
 				showErrorDialog("A layer with the name " + command.newName + " exists already.");
 				return;
 			}
-			Layer layer = worldGenerator.getLayer(command.oldName);
+			Layer layer = opus.getLayer(command.oldName);
 			layer.getConfig().id = command.newName;
 			Editor.post(new EventLayersChanged());
 		}
@@ -1105,7 +1105,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 				showErrorDialog("You can not rename the default interpreter.");
 				return;
 			}
-			samplerLoader.changeInterpreterId(command.oldName, command.newName, worldGenerator.getLayers());
+			samplers.changeInterpreterId(command.oldName, command.newName, opus.getLayers());
 			Editor.post(new EventInterpreterPoolChanged());
 		}
 	}
@@ -1113,11 +1113,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@Subscribe
 	@SuppressWarnings("unused")
 	public void createInterpreter(CommandCreateInterpreter command) {
-		if (samplerLoader.getInterpreter(command.id) != null) {
+		if (samplers.getInterpreter(command.id) != null) {
 			showErrorDialog("Can not create interpreter. The id '" + command.id + "' is already used.");
 		} else {
 			if (isValidName(command.id)) {
-				samplerLoader.addInterpreter(new ColorInterpreter(command.id));
+				samplers.addInterpreter(new ColorInterpreter(command.id));
 				Editor.post(new EventInterpreterPoolChanged());
 			} else {
 				showErrorDialog("Invalid name '" + command.id + "'");

@@ -2,14 +2,14 @@ package com.nukethemoon.tools.opusproto.loader.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerUnresolvedDependencyException;
 import com.nukethemoon.tools.opusproto.generator.WorldConfiguration;
-import com.nukethemoon.tools.opusproto.generator.WorldGenerator;
+import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.layer.Layer;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
 import java.io.File;
 import java.io.FileFilter;
@@ -19,18 +19,55 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * This class initializes Opus by a json file.
+ */
 public class JsonLoader {
 
 	private Gson gson;
 	private static Charset CHARSET = StandardCharsets.UTF_8;
 
+	/**
+	 * Creates a new instance.
+	 */
 	public JsonLoader() {
 		gson = new GsonBuilder().setPrettyPrinting().create();
 	}
 
-	public WorldGenerator load(SamplerLoader loader, NoiseAlgorithmPool noisePool, String filePath)
-			throws SamplerInvalidConfigException, SamplerUnresolvedDependencyException, SamplerRecursionException, IOException {
+	/**
+	 * Loads Opus by a json file located
+	 * at the assigned relative path.
+	 * @param filePath The relative path to the json file.
+	 * @return The initialized WorldGenerator.
+	 * @throws SamplerInvalidConfigException
+	 * @throws SamplerUnresolvedDependencyException
+	 * @throws SamplerRecursionException
+	 * @throws IOException
+	 */
+	public Opus load(String filePath) throws SamplerInvalidConfigException, SamplerUnresolvedDependencyException, SamplerRecursionException, IOException {
+		return load(new Samplers(), new Algorithms(), filePath);
+	}
 
+	/**
+	 * Loads Opus by a json file located
+	 * at the assigned relative path. An instance of SamplerLoader
+	 * and NoiseAlgorithmPool can be passed if they
+	 * are initialized before.
+	 * @param samplers The Samplers to use.
+	 * @param algorithms The Algorithms to use.
+	 * @param filePath The relative path to the json file.
+	 * @return The initialized WorldGenerator.
+	 * @throws SamplerInvalidConfigException
+	 * @throws SamplerUnresolvedDependencyException
+	 * @throws SamplerRecursionException
+	 * @throws IOException
+	 */
+	public Opus load(Samplers samplers, Algorithms algorithms, String filePath)
+			throws SamplerInvalidConfigException, SamplerUnresolvedDependencyException,
+			SamplerRecursionException, IOException {
+
+		samplers = samplers == null ? new Samplers() : samplers;
+		algorithms = algorithms == null ? new Algorithms() : algorithms;
 		byte[] bytes = Files.readAllBytes(Paths.get(filePath));
 		WorldSave save = gson.fromJson(new String(bytes, CHARSET), WorldSave.class);
 		WorldConfiguration worldConfiguration = save.worldConfig;
@@ -38,21 +75,20 @@ public class JsonLoader {
 		AbstractSamplerConfiguration[] samplerConfigList = new AbstractSamplerConfiguration[save.samplerConfigs.length];
 		for (int i = 0; i < save.samplerConfigs.length; i++) {
 			WorldSave.SamplerConfigEntry entry = save.samplerConfigs[i];
-			samplerConfigList[i] = gson.fromJson(entry.data, SamplerLoader.getConfigClassByName(entry.type));
+			samplerConfigList[i] = gson.fromJson(entry.data, Samplers.getConfigClassByName(entry.type));
 		}
-		loader.loadSamplers(samplerConfigList, worldConfiguration.seed, noisePool);
+		samplers.loadSamplers(samplerConfigList, worldConfiguration.seed, algorithms);
 		for (int i = 0; i < save.interpreters.length; i++) {
-			loader.addInterpreter(save.interpreters[i]);
+			samplers.addInterpreter(save.interpreters[i]);
 		}
 		Layer[] layerList = new Layer[save.layerConfigs.length];
 		for (int i = 0; i < save.layerConfigs.length; i++) {
-			layerList[i] = new Layer(save.layerConfigs[i], worldConfiguration.seed, loader);
+			layerList[i] = new Layer(save.layerConfigs[i], worldConfiguration.seed, samplers);
 		}
-		return new WorldGenerator(worldConfiguration, layerList);
+		return new Opus(worldConfiguration, layerList);
 	}
 
-
-	public void save(SamplerLoader samplerLoader, WorldGenerator worldGenerator) {
+	public void save(Samplers samplers, Opus opus) {
 
 		/*if (worldGenerator.getConfig().name == null) {
 			worldGenerator.getConfig().name = saveFilePath;
@@ -132,7 +168,7 @@ public class JsonLoader {
 		return "";
 	}
 
-	public void saveAs(SamplerLoader samplerLoader, WorldGenerator worldGenerator, String name) {
+	public void saveAs(Samplers samplers, Opus opus, String name) {
 		/*saveFilePath = name;
 		worldGenerator.getConfig().name = name;
 		save(samplerLoader, worldGenerator);*/

@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Config;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandGenerateWorld;
@@ -26,7 +26,7 @@ public class TopMenu extends Table {
 	private final InfoTable infoTable;
 	private final SnapshotTable snapshotTable;
 
-	public TopMenu(Skin skin, final LayerEditor layerEditor, final Table samplerUI, final Table worldUI, SamplerLoader samplerLoader) {
+	public TopMenu(Skin skin, final LayerEditor layerEditor, final Table samplerUI, final Table worldUI, Samplers samplers) {
 		super(skin);
 		pad(2);
 		setBackground(Styles.STANDARD_BACKGROUND);
@@ -57,7 +57,7 @@ public class TopMenu extends Table {
 		infoTable = new InfoTable(skin);
 		add(infoTable).left().top();
 
-		snapshotTable = new SnapshotTable(skin, samplerLoader);
+		snapshotTable = new SnapshotTable(skin, samplers);
 		snapshotTable.setVisible(false);
 		add(snapshotTable).left().top();
 

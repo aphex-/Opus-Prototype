@@ -2,19 +2,19 @@ package com.nukethemoon.tools.opusproto.sampler.noise;
 
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.noise.AbstractNoiseAlgorithm;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 
 public class NoiseSampler extends AbstractSampler {
 
 	private AbstractNoiseAlgorithm noiseAlgorithm;
 	private NoiseConfig noiseConfig;
 
-	public NoiseSampler(AbstractSamplerConfiguration config, double seed, NoiseAlgorithmPool pool, SamplerLoader samplerLoader) throws SamplerInvalidConfigException {
-		super(config, seed, pool, samplerLoader);
+	public NoiseSampler(AbstractSamplerConfiguration config, double seed, Algorithms pool, Samplers samplers) throws SamplerInvalidConfigException {
+		super(config, seed, pool, samplers);
 		noiseConfig = (NoiseConfig) config;
 		init();
 	}

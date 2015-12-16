@@ -15,7 +15,7 @@ import com.nukethemoon.tools.opusproto.editor.ui.dialogs.BaseDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.NewLayerDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.RenameDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.world.WorldLayerEntry;
-import com.nukethemoon.tools.opusproto.generator.WorldGenerator;
+import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 
 import java.util.List;
@@ -25,11 +25,11 @@ public class WorldEditor extends ClosableWindow implements WorldLayerEntry.Layer
 	private final Table layers;
 	private final Label worldName;
 	private Table layersContainer;
-	private WorldGenerator generator;
+	private Opus generator;
 	private Skin skin;
 
 
-	public WorldEditor(final Skin skin, WorldGenerator generator, final Stage stage, final String projectName) {
+	public WorldEditor(final Skin skin, Opus generator, final Stage stage, final String projectName) {
 		super("WORLD", skin);
 		defaults().pad(2);
 		this.generator = generator;

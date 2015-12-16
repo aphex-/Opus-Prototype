@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Settings;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandOpenAboutWindow;
@@ -28,8 +28,8 @@ import com.nukethemoon.tools.opusproto.editor.ui.windows.SamplerEditor;
 import com.nukethemoon.tools.opusproto.editor.ui.windows.SamplerOverview;
 import com.nukethemoon.tools.opusproto.editor.ui.windows.SettingsWindow;
 import com.nukethemoon.tools.opusproto.editor.ui.windows.WorldEditor;
-import com.nukethemoon.tools.opusproto.generator.WorldGenerator;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.generator.Opus;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -48,12 +48,12 @@ public class UI {
 
 	private static final int PADDING_TOP = 30;
 
-	private NoiseAlgorithmPool noisePool;
+	private Algorithms noisePool;
 
-	private SamplerLoader samplerLoader;
+	private Samplers samplers;
 	private Bus bus;
 	private WorldEditor worldEditor;
-	private WorldGenerator worldGenerator;
+	private Opus opus;
 	private Settings settings;
 
 	private ColorInterpreterEditor colorInterpreterEditor;
@@ -68,31 +68,31 @@ public class UI {
 	private AboutWindow aboutWindow;
 
 	public UI(final Stage pStage, LwjglApplicationConfiguration cfg,
-			  WorldGenerator worldGenerator, NoiseAlgorithmPool noisePool,
-			  SamplerLoader samplerLoader, Bus bus, Skin uiSkin,
+			  Opus opus, Algorithms noisePool,
+			  Samplers samplers, Bus bus, Skin uiSkin,
 			  Settings settings) {
 		this.cfg = cfg;
-		this.worldGenerator = worldGenerator;
+		this.opus = opus;
 		this.settings = settings;
 		this.bus = bus;
 		this.noisePool = noisePool;
-		this.samplerLoader = samplerLoader;
+		this.samplers = samplers;
 
 
 
-		initUI(uiSkin, worldGenerator, pStage, cfg, settings);
+		initUI(uiSkin, opus, pStage, cfg, settings);
 	}
 
 
-	private void initUI(final Skin uiSkin, WorldGenerator generator,
+	private void initUI(final Skin uiSkin, Opus generator,
 						final Stage pStage, LwjglApplicationConfiguration cfg,
 						Settings settings) {
 
-		samplerEditor = new SamplerEditor(uiSkin, pStage, noisePool, samplerLoader);
+		samplerEditor = new SamplerEditor(uiSkin, pStage, noisePool, samplers);
 		samplerEditor.left().top();
 		windowList.add(samplerEditor);
 
-		layerEditor = new LayerEditor(uiSkin, generator.getLayers().get(0), pStage, samplerLoader, generator);
+		layerEditor = new LayerEditor(uiSkin, generator.getLayers().get(0), pStage, samplers, generator);
 		layerEditor.left().top();
 		windowList.add(layerEditor);
 
@@ -101,15 +101,15 @@ public class UI {
 		windowList.add(worldEditor);
 
 
-		samplerOverview = new SamplerOverview(uiSkin, pStage, samplerLoader);
+		samplerOverview = new SamplerOverview(uiSkin, pStage, samplers);
 		samplerOverview.left().top();
 		windowList.add(samplerOverview);
 
-		projectWindow = new ProjectWindow(uiSkin, worldGenerator, samplerLoader);
+		projectWindow = new ProjectWindow(uiSkin, opus, samplers);
 		projectWindow.left().top();
 		windowList.add(projectWindow);
 
-		interpreterList = new ColorInterpreterList(uiSkin, samplerLoader);
+		interpreterList = new ColorInterpreterList(uiSkin, samplers);
 		interpreterList.left().top();
 		windowList.add(interpreterList);
 
@@ -134,7 +134,7 @@ public class UI {
 		}
 
 		// others
-		topMenu = new TopMenu(uiSkin, layerEditor, samplerEditor, worldEditor, samplerLoader);
+		topMenu = new TopMenu(uiSkin, layerEditor, samplerEditor, worldEditor, samplers);
 		topMenu.left().top();
 		pStage.addActor(topMenu);
 
@@ -150,7 +150,7 @@ public class UI {
 			dependencyWindow.remove();
 		}
 		dependencyWindow = new DependencyWindow(Styles.UI_SKIN);
-		dependencyWindow.showDependencies(command.id, samplerLoader, worldGenerator.getLayers());
+		dependencyWindow.showDependencies(command.id, samplers, opus.getLayers());
 		Editor.STAGE.addActor(dependencyWindow);
 		dependencyWindow.setVisible(true);
 		dependencyWindow.toFront();

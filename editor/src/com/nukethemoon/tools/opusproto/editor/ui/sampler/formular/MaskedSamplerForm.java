@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.sampler.CommandOpenSamplerEditor;
 import com.nukethemoon.tools.opusproto.editor.message.layer.EventLayersChanged;
@@ -23,7 +23,7 @@ public class MaskedSamplerForm extends AbstractSamplerForm {
 	private final SamplerSelectBoxElement maskSelector;
 	private final SamplerSelectBoxElement samplerSelector;
 
-	public MaskedSamplerForm(Skin skin, final AbstractSampler sampler, final SamplerLoader pool) {
+	public MaskedSamplerForm(Skin skin, final AbstractSampler sampler, final Samplers pool) {
 		super(skin, sampler, pool);
 		top().left();
 		defaults().pad(2);
@@ -113,9 +113,9 @@ public class MaskedSamplerForm extends AbstractSamplerForm {
 	public void loadFromConfig(AbstractSamplerConfiguration config) {
 		MaskedSamplerConfig c = (MaskedSamplerConfig) config;
 		if (c.samplerItems != null && c.samplerItems.length > 0) {
-			maskSelector.setSelected(samplerLoader.getSampler(c.samplerItems[0].samplerReferenceId));
+			maskSelector.setSelected(samplers.getSampler(c.samplerItems[0].samplerReferenceId));
 			if (c.samplerItems.length > 1) {
-				samplerSelector.setSelected(samplerLoader.getSampler(c.samplerItems[1].samplerReferenceId));
+				samplerSelector.setSelected(samplers.getSampler(c.samplerItems[1].samplerReferenceId));
 			}
 		}
 	}

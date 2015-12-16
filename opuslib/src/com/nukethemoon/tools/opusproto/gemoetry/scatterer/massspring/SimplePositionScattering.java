@@ -1,12 +1,12 @@
 package com.nukethemoon.tools.opusproto.gemoetry.scatterer.massspring;
 
 import com.nukethemoon.tools.opusproto.MathE;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.gemoetry.AbstractGeometryData;
 import com.nukethemoon.tools.opusproto.gemoetry.PointList;
 import com.nukethemoon.tools.opusproto.gemoetry.scatterer.AbstractGeometrySampler;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.noise.algorithms.SimplexNoise;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
@@ -23,9 +23,9 @@ public class SimplePositionScattering extends AbstractGeometrySampler {
 
 
 	public SimplePositionScattering(AbstractSamplerConfiguration config,
-									double worldSeed, NoiseAlgorithmPool noisePool,
-									SamplerLoader samplerLoader) {
-		super(config, worldSeed, noisePool, samplerLoader);
+									double worldSeed, Algorithms noisePool,
+									Samplers samplers) {
+		super(config, worldSeed, noisePool, samplers);
 		c = ((SimplePositionConfig) config);
 
 		if (c.maximumDistance >= c.gridSize / 2f) {
@@ -34,7 +34,7 @@ public class SimplePositionScattering extends AbstractGeometrySampler {
 			);
 		}
 
-		simplexNoise = (SimplexNoise) noisePool.getAlgorithm(NoiseAlgorithmPool.NAME_SIMPLEX);
+		simplexNoise = (SimplexNoise) noisePool.getAlgorithm(Algorithms.NAME_SIMPLEX);
 	}
 
 	@Override

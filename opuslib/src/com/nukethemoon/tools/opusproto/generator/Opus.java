@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-public class WorldGenerator {
+public class Opus {
 
 	private WorldConfiguration config;
 	private List<ChunkListener> chunkListeners = new ArrayList<ChunkListener>();
@@ -18,7 +18,7 @@ public class WorldGenerator {
 	private List<Layer> layers = new ArrayList<Layer>();
 	private List<Chunk> chunks = new ArrayList<Chunk>();
 
-	public WorldGenerator(WorldConfiguration config, Layer[] layers) {
+	public Opus(WorldConfiguration config, Layer[] layers) {
 		this.config = config;
 		for (int layerIndex = 0; layerIndex < config.layerIds.length; layerIndex++) {
 			String layerId = config.layerIds[layerIndex];

@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.CommandSnapshotChangeSettings;
 import com.nukethemoon.tools.opusproto.editor.message.CommandSnapshotDelete;
@@ -17,10 +17,10 @@ import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 
 public class SnapshotTable extends Table {
 
-	private SamplerLoader samplerLoader;
+	private Samplers samplers;
 
-	public SnapshotTable(Skin skin, SamplerLoader samplerLoader) {
-		this.samplerLoader = samplerLoader;
+	public SnapshotTable(Skin skin, Samplers samplers) {
+		this.samplers = samplers;
 		top().left();
 		setBackground(Styles.ITEM_BACKGROUND);
 

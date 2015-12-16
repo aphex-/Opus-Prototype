@@ -12,7 +12,7 @@ import com.nukethemoon.tools.opusproto.editor.message.CommandDrawRectangle;
 import com.nukethemoon.tools.opusproto.editor.message.CommandGenerateWorld;
 import com.nukethemoon.tools.opusproto.editor.message.CommandSnapshot;
 import com.nukethemoon.tools.opusproto.editor.ui.UI;
-import com.nukethemoon.tools.opusproto.generator.WorldGenerator;
+import com.nukethemoon.tools.opusproto.generator.Opus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class InputController implements InputProcessor {
 	private Stage stage;
 	private OrthographicCamera camera;
 	private UI ui;
-	private WorldGenerator worldGenerator;
+	private Opus opus;
 	public Vector3 mouseWorldPosition = new Vector3();
 	private int windowWidth;
 	private int windowHeight;
@@ -38,12 +38,12 @@ public class InputController implements InputProcessor {
 
 
 	public InputController(Stage stage, OrthographicCamera camera,
-						   UI ui, WorldGenerator worldGenerator,
+						   UI ui, Opus opus,
 						   LwjglApplicationConfiguration cfg) {
 		this.stage = stage;
 		this.camera = camera;
 		this.ui = ui;
-		this.worldGenerator = worldGenerator;
+		this.opus = opus;
 		windowWidth = cfg.width;
 		windowHeight = cfg.height;
 	}

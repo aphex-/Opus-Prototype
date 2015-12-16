@@ -1,6 +1,6 @@
 package com.nukethemoon.tools.opusproto.sampler.noise;
 
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
 
 /**
@@ -12,6 +12,6 @@ public class NoiseConfig extends AbstractSamplerConfiguration {
 
 	public NoiseConfig(String id) {
 		super(id);
-		this.noiseAlgorithmName = NoiseAlgorithmPool.NAME_SIMPLEX;
+		this.noiseAlgorithmName = Algorithms.NAME_SIMPLEX;
 	}
 }

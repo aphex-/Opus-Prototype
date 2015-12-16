@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.editor.app.Editor;
 import com.nukethemoon.tools.opusproto.editor.message.layer.CommandOpenLayerEditor;
 import com.nukethemoon.tools.opusproto.editor.message.sampler.CommandOpenSamplerEditor;
@@ -47,7 +47,7 @@ public class DependencyWindow extends ClosableWindow {
 
 	}
 
-	public void showDependencies(String samplerId, SamplerLoader loader, List<Layer> layers) {
+	public void showDependencies(String samplerId, Samplers loader, List<Layer> layers) {
 		dependencyContainer.clear();
 
 		samplerLabel.setText(samplerId);

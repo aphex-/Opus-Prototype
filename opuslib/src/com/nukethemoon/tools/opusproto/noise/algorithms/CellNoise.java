@@ -4,7 +4,7 @@ import com.nukethemoon.tools.opusproto.gemoetry.PointList;
 import com.nukethemoon.tools.opusproto.gemoetry.scatterer.massspring.SimplePositionConfig;
 import com.nukethemoon.tools.opusproto.gemoetry.scatterer.massspring.SimplePositionScattering;
 import com.nukethemoon.tools.opusproto.noise.AbstractNoiseAlgorithm;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 
 /**
  * Own implementation based on
@@ -16,7 +16,7 @@ public class CellNoise extends AbstractNoiseAlgorithm {
 
 	private SimplePositionScattering scattering;
 
-	public CellNoise(NoiseAlgorithmPool pool) {
+	public CellNoise(Algorithms pool) {
 		SimplePositionConfig positionConfig = new SimplePositionConfig("internal");
 		scattering = new SimplePositionScattering(positionConfig, 2323, pool, null);
 	}

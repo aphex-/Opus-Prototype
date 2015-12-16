@@ -1,8 +1,8 @@
 package com.nukethemoon.tools.opusproto.sampler.combined;
 
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
-import com.nukethemoon.tools.opusproto.noise.NoiseAlgorithmPool;
+import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
@@ -15,8 +15,8 @@ public class Combined extends AbstractSampler {
 	private CombinedConfig combinedConfig;
 	private AbstractSampler[] samplers;
 
-	public Combined(AbstractSamplerConfiguration config, double worldSeed, NoiseAlgorithmPool noisePool, SamplerLoader samplerLoader) throws SamplerInvalidConfigException {
-		super(config, worldSeed, noisePool, samplerLoader);
+	public Combined(AbstractSamplerConfiguration config, double worldSeed, Algorithms noisePool, Samplers samplers) throws SamplerInvalidConfigException {
+		super(config, worldSeed, noisePool, samplers);
 		combinedConfig = (CombinedConfig) config;
 		init();
 	}

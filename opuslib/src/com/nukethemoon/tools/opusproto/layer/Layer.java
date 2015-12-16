@@ -1,6 +1,6 @@
 package com.nukethemoon.tools.opusproto.layer;
 
-import com.nukethemoon.tools.opusproto.SamplerLoader;
+import com.nukethemoon.tools.opusproto.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
@@ -13,7 +13,7 @@ public class Layer extends AbstractSampler {
 	private MaskedSampler[] maskSampler;
 
 	private LayerConfig layerConfig;
-	private SamplerLoader samplerLoader;
+	private Samplers samplers;
 
 	private AbstractInterpreter interpreter;
 
@@ -23,13 +23,13 @@ public class Layer extends AbstractSampler {
 	 * Crates a new layer.
 	 * @param pConfig The configuration of the layer.
 	 * @param seed The world seed.
-	 * @param samplerLoader The sampler loader
+	 * @param samplers The sampler loader
 	 * @throws SamplerInvalidConfigException
 	 */
-	public Layer(LayerConfig pConfig, double seed, SamplerLoader samplerLoader) throws SamplerInvalidConfigException {
-		super(pConfig, seed, null, samplerLoader);
+	public Layer(LayerConfig pConfig, double seed, Samplers samplers) throws SamplerInvalidConfigException {
+		super(pConfig, seed, null, samplers);
 		this.layerConfig = pConfig;
-		this.samplerLoader = samplerLoader;
+		this.samplers = samplers;
 		init();
 	}
 
@@ -73,7 +73,7 @@ public class Layer extends AbstractSampler {
 
 	@Override
 	public void loadConfig() throws SamplerInvalidConfigException {
-		this.interpreter = samplerLoader.getInterpreter(layerConfig.interpreterId);
+		this.interpreter = samplers.getInterpreter(layerConfig.interpreterId);
 
 		if (layerConfig.getChildSamplerConfigs() == null) {
 			layerConfig.samplerItems = new ChildSamplerConfig[0];
@@ -81,7 +81,7 @@ public class Layer extends AbstractSampler {
 		this.maskSampler = new MaskedSampler[layerConfig.samplerItems.length];
 		for (int i = 0; i < layerConfig.samplerItems.length; i++) {
 			String maskSamplerId = layerConfig.samplerItems[i].samplerReferenceId;
-			AbstractSampler sampler = samplerLoader.getSampler(maskSamplerId);
+			AbstractSampler sampler = samplers.getSampler(maskSamplerId);
 
 			if (sampler == null) {
 				throw new SamplerInvalidConfigException("The '"+ layerConfig.id + "' "
