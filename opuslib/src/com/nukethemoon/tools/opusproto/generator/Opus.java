@@ -138,7 +138,7 @@ public class Opus {
 		return config;
 	}
 
-	public void addRegionListener(ChunkListener listener) {
+	public void addChunkListener(ChunkListener listener) {
 		chunkListeners.add(listener);
 	}
 

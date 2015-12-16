@@ -125,16 +125,17 @@ public class Editor implements ApplicationListener, ChunkListener {
 	private int windowWidth;
 	private int windowHeight;
 
-	private boolean worldRenderEnabled = false;
+	private boolean chunkRendererEnabled = false;
 
 	private static Bus bus = new Bus(ThreadEnforcer.ANY);
 
-	public static String DEFAULT_SAMPLER_NAME = "EditorDefaultSampler";
-	public static String DEFAULT_MASK_SAMPLER_NAME = "EditorDefaultMask";
-	public static String DEFAULT_INTERPRETER_NAME = "EditorDefaultInterpreter";
+	public static final String DEFAULT_SAMPLER_NAME = "EditorDefaultSampler";
+	public static final String DEFAULT_MASK_SAMPLER_NAME = "EditorDefaultMask";
+	public static final String DEFAULT_INTERPRETER_NAME = "EditorDefaultInterpreter";
+	public static final String DEFAULT_LAYER_NAME = "EditorDefaultLayer";
 
 	private Algorithms algorithms;
-	private OpusConfiguration opusConfiguration;
+
 	private Samplers samplers;
 
 	private Vector3 tmpVector0 = new Vector3();
@@ -322,7 +323,6 @@ public class Editor implements ApplicationListener, ChunkListener {
 		}
 
 		fileOperation = new JsonLoader();
-
 		algorithms = new Algorithms();
 		samplers = new Samplers();
 
@@ -331,46 +331,39 @@ public class Editor implements ApplicationListener, ChunkListener {
 		try {
 			String projectFile = Config.PROJECT_PATH + projectName + Config.SAVE_FILE_NAME;
 			if (Gdx.files.local(projectFile).exists()) {
+
 				opus = fileOperation.load(samplers, algorithms, projectFile);
+				createEditorDefaultSampler(samplers, algorithms, opus.getConfig().seed);
 			} else {
-				opus = new Opus(new OpusConfiguration(), new Layer[]{});
+				// initialize a new project
+				OpusConfiguration newOpusConfig = new OpusConfiguration();
+
+				createEditorDefaultSampler(samplers, algorithms, newOpusConfig.seed);
+
+				newOpusConfig.name = projectName;
+				newOpusConfig.layerIds = new String[]{DEFAULT_LAYER_NAME};
+				LayerConfig baseLayerConfig = new LayerConfig(DEFAULT_LAYER_NAME);
+				baseLayerConfig.interpreterId = DEFAULT_INTERPRETER_NAME;
+				baseLayerConfig.samplerItems = new ChildSamplerConfig[] {
+					new ChildSamplerConfig(DEFAULT_MASK_SAMPLER_NAME)
+				};
+				Layer baseLayer = new Layer(baseLayerConfig, newOpusConfig.seed, samplers);
+				opus = new Opus(newOpusConfig, new Layer[]{baseLayer});
 			}
 		} catch (Exception e) {
 			showException(e, "Error initializing project.");
 			return;
 		}
 
-		opusConfiguration = opus.getConfig();
-		opus.addRegionListener(this);
 
-		// init a new projects
-		if (opus.getLayers().size() == 0) {
-			try {
-				LayerConfig config = new LayerConfig("BaseLayer");
-				config.interpreterId = DEFAULT_INTERPRETER_NAME;
-				opus.getLayers().add(new Layer(config, opusConfiguration.seed, samplers));
-			} catch (SamplerInvalidConfigException e) {
-				showException(e, "Error initializing project.");
-				return;
-			}
-			opusConfiguration.layerIds = new String[]{"BaseLayer"};
-		}
-
-		createEditorDefaultSampler(samplers, algorithms, opusConfiguration.seed);
-
+		opus.addChunkListener(this);
 		ui = new UI(STAGE, cfg, opus, algorithms, samplers, bus, Styles.UI_SKIN, settings);
 		bus.register(ui);
-
-		generate(opus);
-
-		worldRenderEnabled = true;
-
+		requestFirstChunks(opus);
+		chunkRendererEnabled = true;
 		inputController = new InputController(STAGE, camera, ui, opus, cfg);
 		inputMultiplexer.addProcessor(inputController);
-
-
 		clearColor = Color.BLACK;
-
 	}
 
 	private void createEditorDefaultSampler(Samplers sam, Algorithms alg, double opusSeed) {
@@ -390,15 +383,13 @@ public class Editor implements ApplicationListener, ChunkListener {
 			showException(e, "Error loading editor standard sampler.");
 			return;
 		}
-
-
 	}
 
 	@Subscribe
 	@SuppressWarnings("unused")
 	public void save(CommandSaveProject command) {
 		try {
-			fileOperation.save(samplers, opus, "/data/peter");
+			fileOperation.save(samplers, opus, Config.PROJECT_PATH + opus.getConfig().name + Config.SAVE_FILE_NAME);
 		} catch (Exception e) {
 			showException(e, "Error saving project ");
 		}
@@ -481,7 +472,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			}
 
 			layerToSprites.clear();
-			generate(opus);
+			requestFirstChunks(opus);
 		}
 	}
 
@@ -538,7 +529,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		int highY = y1 > y2 ? y1 : y2;
 
 		commandDrawRectangle = null;
-		if ((highX - lowX) * (highY - lowY) > opusConfiguration.mapSize * (50 * performanceFactor)) {
+		if ((highX - lowX) * (highY - lowY) > opus.getConfig().mapSize * (50 * performanceFactor)) {
 			return;
 		}
 
@@ -593,11 +584,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 		samplerSnapshot.setAlpha(command.opacity);
 	}
 
-	private void generate(Opus world) {
-		int startSize = 1;
+	private void requestFirstChunks(Opus op) {
+		int startSize = 4;
 
 		layerToSprites.clear();
-		for (Layer l : opus.getLayers()) {
+		for (Layer l : op.getLayers()) {
 			if (layerToSprites.get(l) == null) {
 				layerToSprites.put(l, new ArrayList<Sprite>());
 			}
@@ -816,7 +807,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		if (configClass != null) {
 			try {
 				AbstractSamplerConfiguration o = (AbstractSamplerConfiguration) configClass.getConstructors()[0].newInstance(command.name);
-				AbstractSampler sampler = Samplers.create(o, opusConfiguration.seed, algorithms, samplers);
+				AbstractSampler sampler = Samplers.create(o, opus.getConfig().seed, algorithms, samplers);
 				samplers.addSampler(sampler);
 				Editor.post(new EventSamplerPoolChanged());
 				Editor.post(new CommandOpenSamplerEditor(sampler.getConfig().id));
@@ -843,7 +834,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 
 
-		if (worldRenderEnabled) {
+		if (chunkRendererEnabled) {
 			blinkProgress = (blinkProgress + 0.04f) % 1f;
 			drawGrid();
 			batch.begin();
@@ -945,24 +936,24 @@ public class Editor implements ApplicationListener, ChunkListener {
 		float screenBottom = tmpVector1.y;
 		float screenWidth = Math.abs(screenRight - screenLeft);
 		float screenHeight = Math.abs(screenTop + screenBottom);
-		int linesCountX = (int) ((screenWidth * camera.zoom) / opusConfiguration.mapSize) + 4;
-		int linesCountY = (int) ((screenHeight * camera.zoom) / opusConfiguration.mapSize) + 4;
-		int linesOffsetX = (int) (camera.position.x / opusConfiguration.mapSize);
-		int linesOffsetY = (int) (camera.position.y / opusConfiguration.mapSize);
+		int linesCountX = (int) ((screenWidth * camera.zoom) / opus.getConfig().mapSize) + 4;
+		int linesCountY = (int) ((screenHeight * camera.zoom) / opus.getConfig().mapSize) + 4;
+		int linesOffsetX = (int) (camera.position.x / opus.getConfig().mapSize);
+		int linesOffsetY = (int) (camera.position.y / opus.getConfig().mapSize);
 		if (linesCountX < 100 && linesCountY < 100) {
 			for (int x = -linesCountX / 2; x < linesCountX / 2; x++) {
 				for (int y = -linesCountY / 2; y < linesCountY / 2; y++) {
 					int offsetX = x + linesOffsetX;
 					int offsetY = y + linesOffsetY;
 					// horizontal lines
-					tmpVector0.set(camera.position.x - screenWidth * camera.zoom, opusConfiguration.mapSize * offsetY, 0);
-					tmpVector1.set(camera.position.x + screenWidth * camera.zoom, opusConfiguration.mapSize * offsetY, 0);
+					tmpVector0.set(camera.position.x - screenWidth * camera.zoom, opus.getConfig().mapSize * offsetY, 0);
+					tmpVector1.set(camera.position.x + screenWidth * camera.zoom, opus.getConfig().mapSize * offsetY, 0);
 					camera.project(tmpVector1);
 					camera.project(tmpVector0);
 					screenShapeRenderer.line(tmpVector0.x, tmpVector0.y, tmpVector1.x, tmpVector1.y);
 					// vertical lines
-					tmpVector0.set(opusConfiguration.mapSize * offsetX, camera.position.y - screenHeight * camera.zoom, 0);
-					tmpVector1.set(opusConfiguration.mapSize * offsetX, camera.position.y + screenHeight * camera.zoom, 0);
+					tmpVector0.set(opus.getConfig().mapSize * offsetX, camera.position.y - screenHeight * camera.zoom, 0);
+					tmpVector1.set(opus.getConfig().mapSize * offsetX, camera.position.y + screenHeight * camera.zoom, 0);
 					camera.project(tmpVector1);
 					camera.project(tmpVector0);
 					screenShapeRenderer.line(tmpVector0.x, tmpVector0.y, tmpVector1.x, tmpVector1.y);
@@ -1135,7 +1126,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	}
 
 	private void updateWorldName(String name) {
-		opusConfiguration.name = name;
+		opus.getConfig().name = name;
 		ui.getWorldEditor().setWorldName(name);
 		ui.getProjectWindow().setWorldName(name);
 	}
