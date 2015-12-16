@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.nukethemoon.tools.ani.Ani;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 import com.nukethemoon.tools.ani.BaseAnimation;
+import com.nukethemoon.tools.opusproto.editor.ui.dialogs.*;
 import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.editor.Config;
 import com.nukethemoon.tools.opusproto.editor.InputController;
@@ -48,10 +49,6 @@ import com.nukethemoon.tools.opusproto.editor.message.sampler.CommandOpenSampler
 import com.nukethemoon.tools.opusproto.editor.message.sampler.EventSamplerPoolChanged;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 import com.nukethemoon.tools.opusproto.editor.ui.UI;
-import com.nukethemoon.tools.opusproto.editor.ui.dialogs.BaseDialog;
-import com.nukethemoon.tools.opusproto.editor.ui.dialogs.ErrorDialog;
-import com.nukethemoon.tools.opusproto.editor.ui.dialogs.ProjectDialog;
-import com.nukethemoon.tools.opusproto.editor.ui.dialogs.SaveAsDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.AbstractSamplerForm;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.formular.AContinentForm;
 import com.nukethemoon.tools.opusproto.editor.ui.sampler.formular.CombinedSamplerForm;
@@ -86,7 +83,7 @@ import com.nukethemoon.tools.opusproto.sampler.masked.MaskedSampler;
 import com.nukethemoon.tools.opusproto.sampler.masked.MaskedSamplerConfig;
 import com.nukethemoon.tools.opusproto.sampler.noise.NoiseConfig;
 import com.nukethemoon.tools.opusproto.sampler.noise.NoiseSampler;
-import com.nukethemoon.tools.opusproto.tools.Log;
+import com.nukethemoon.tools.opusproto.log.Log;
 import com.nukethemoon.tools.simpletask.SimpleTaskExecutor;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -405,8 +402,18 @@ public class Editor implements ApplicationListener, ChunkListener {
 				String name = (String) result;
 				if (isValidName(name)) {
 					if (!Gdx.files.local(Config.PROJECT_PATH  + name).exists()) {
-						fileOperation.saveAs(samplers, opus, name);
-						updateWorldName(name);
+						String saveAsFile = Config.PROJECT_PATH  + name + Config.SAVE_FILE_NAME;
+						String originName = opus.getConfig().name;
+						opus.getConfig().name = name;
+						try {
+							Gdx.files.local(Config.PROJECT_PATH  + name).mkdirs();
+							fileOperation.save(samplers, opus, saveAsFile);
+						} catch (IOException e) {
+							showException(e);
+							opus.getConfig().name = originName;
+							return;
+						}
+						showSuccessDialog("Successfully saved as " + saveAsFile);
 					} else {
 						showErrorDialog("Can not save as " + name + ". A project with this name exists already.");
 					}
@@ -1037,6 +1044,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	public static void showErrorDialog(String text) {
 		ErrorDialog errorDialog = new ErrorDialog(text, Styles.UI_SKIN);
+		errorDialog.show(STAGE);
+	}
+
+	public static void showSuccessDialog(String text) {
+		SuccessDialog errorDialog = new SuccessDialog(text, Styles.UI_SKIN);
 		errorDialog.show(STAGE);
 	}
 

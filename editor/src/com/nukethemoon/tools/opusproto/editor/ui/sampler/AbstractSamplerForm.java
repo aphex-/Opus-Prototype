@@ -10,7 +10,7 @@ import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
 import com.nukethemoon.tools.opusproto.sampler.Samplers;
-import com.nukethemoon.tools.opusproto.tools.Log;
+import com.nukethemoon.tools.opusproto.log.Log;
 
 public abstract class AbstractSamplerForm extends AbstractChangeForm {
 

@@ -10,7 +10,7 @@ import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.noise.algorithms.SimplexNoise;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
-import com.nukethemoon.tools.opusproto.tools.Log;
+import com.nukethemoon.tools.opusproto.log.Log;
 
 import java.util.ArrayList;
 import java.util.List;

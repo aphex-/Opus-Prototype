@@ -31,7 +31,7 @@ import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
-import com.nukethemoon.tools.opusproto.tools.Log;
+import com.nukethemoon.tools.opusproto.log.Log;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;

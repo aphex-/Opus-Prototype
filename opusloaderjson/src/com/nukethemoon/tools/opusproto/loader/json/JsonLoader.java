@@ -16,8 +16,6 @@ import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -105,19 +103,6 @@ public class JsonLoader {
 	 * @param saveFilePath The file path to save to.
 	 */
 	public void save(Samplers samplers, Opus opus, String saveFilePath) throws IOException {
-
-		/*if (opus.getConfig().name == null) {
-			opus.getConfig().name = saveFilePath;
-		}
-
-		if (!opus.getConfig().name.equals(saveFilePath)) {
-			// project was renamed
-			FileHandle local = Gdx.files.local(Config.PROJECT_PATH + saveFilePath);
-			File file = new File(Config.PROJECT_PATH + opus.getConfig().name);
-			local.file().renameTo(file);
-			saveFilePath = opus.getConfig().name;
-		}*/
-
 		PersistenceOpus save = new PersistenceOpus();
 		AbstractInterpreter[] interpreterList = samplers.createInterpreterList();
 		save.interpreters = new ColorInterpreter[interpreterList.length];
@@ -153,42 +138,8 @@ public class JsonLoader {
 		String saveJson = gson.toJson(save, PersistenceOpus.class);
 		byte[] saveBytes = saveJson.getBytes(CHARSET);
 
-
 		Files.write(Paths.get(saveFilePath), saveBytes,
-				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE_NEW);
 	}
-
-
-	public static FileFilter JSON_FILE_FILTER = new FileFilter() {
-		@Override
-		public boolean accept(File pathname) {
-			return pathname.isFile() && "json".equals(getFileExtension(pathname.getName()));
-		}
-	};
-
-	public static FileFilter DIRECTORY_FILTER = new FileFilter() {
-		@Override
-		public boolean accept(File pathname) {
-			return pathname.isDirectory();
-		}
-	};
-
-	public static String getFileExtension(String fileName) {
-		int i = fileName.lastIndexOf('.');
-		if (i > 0) {
-			return fileName.substring(i+1);
-		}
-		return "";
-	}
-
-	public void saveAs(Samplers samplers, Opus opus, String name) {
-		/*saveFilePath = name;
-		worldGenerator.getConfig().name = name;
-		save(samplerLoader, worldGenerator);*/
-	}
-
-
-
-
 
 }

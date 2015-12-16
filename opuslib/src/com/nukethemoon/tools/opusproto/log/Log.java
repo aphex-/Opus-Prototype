@@ -1,8 +1,8 @@
-package com.nukethemoon.tools.opusproto.tools;
+package com.nukethemoon.tools.opusproto.log;
 
 public class Log {
 
-	public static Out out = null;
+	public static Out out = new StandardOut();
 
 	public static void i(Class source, String message) {
 		if (out != null) {

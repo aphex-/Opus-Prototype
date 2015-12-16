@@ -8,7 +8,6 @@ public class OpusConfiguration {
 
 	public String seedString;
 	public int mapSize = 30;
-	public int mapsPerRegion = 3;
 	public String name;
 	public String[] layerIds;
 

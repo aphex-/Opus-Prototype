@@ -17,7 +17,7 @@ import com.nukethemoon.tools.opusproto.sampler.masked.MaskedSampler;
 import com.nukethemoon.tools.opusproto.sampler.masked.MaskedSamplerConfig;
 import com.nukethemoon.tools.opusproto.sampler.noise.NoiseConfig;
 import com.nukethemoon.tools.opusproto.sampler.noise.NoiseSampler;
-import com.nukethemoon.tools.opusproto.tools.Log;
+import com.nukethemoon.tools.opusproto.log.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

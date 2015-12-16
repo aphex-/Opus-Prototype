@@ -16,7 +16,7 @@ import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.noise.algorithms.CellNoise;
 import com.nukethemoon.tools.opusproto.sampler.acontinent.AContinent;
 import com.nukethemoon.tools.opusproto.sampler.acontinent.AContinentConfig;
-import com.nukethemoon.tools.opusproto.tools.Log;
+import com.nukethemoon.tools.opusproto.log.Log;
 
 import java.util.ArrayList;
 import java.util.List;

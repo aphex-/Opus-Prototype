@@ -11,6 +11,9 @@ import com.nukethemoon.tools.opusproto.editor.Config;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 import com.nukethemoon.tools.opusproto.loader.json.JsonLoader;
 
+import java.io.File;
+import java.io.FileFilter;
+
 public class ProjectDialog extends BaseDialog {
 
 	private final List<String> projectsList;
@@ -43,7 +46,7 @@ public class ProjectDialog extends BaseDialog {
 		}
 
 		projectsList = new List<String>(skin);
-		FileHandle[] list = projectsDir.list(JsonLoader.DIRECTORY_FILTER);
+		FileHandle[] list = projectsDir.list(DIRECTORY_FILTER);
 		String[] projectNames = new String[list.length];
 		for (int i = 0; i < list.length; i++) {
 			projectNames[i] = list[i].name();
@@ -72,4 +75,11 @@ public class ProjectDialog extends BaseDialog {
 			newProjectDialog.setResultListener(listener);
 		}
 	}
+
+	public static FileFilter DIRECTORY_FILTER = new FileFilter() {
+		@Override
+		public boolean accept(File pathname) {
+			return pathname.isDirectory();
+		}
+	};
 }

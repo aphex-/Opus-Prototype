@@ -36,7 +36,7 @@ import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
-import com.nukethemoon.tools.opusproto.tools.Log;
+import com.nukethemoon.tools.opusproto.log.Log;
 import com.squareup.otto.Subscribe;
 
 import java.lang.reflect.InvocationTargetException;
