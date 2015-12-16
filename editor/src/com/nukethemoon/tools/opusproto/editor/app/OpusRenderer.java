@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.nukethemoon.tools.ani.Ani;
 import com.nukethemoon.tools.opusproto.editor.InputController;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
@@ -48,6 +47,7 @@ public class OpusRenderer {
 	private int windowHeight;
 
 	public OpusRenderer(int windowWidth, int windowHeight, Stage STAGE) {
+		Gdx.graphics.setDisplayMode(windowWidth, windowHeight, false);
 		this.windowHeight = windowHeight;
 		this.windowWidth = windowWidth;
 		stage = STAGE;
@@ -135,8 +135,7 @@ public class OpusRenderer {
 		return positions;
 	}
 
-	public void createSnapshot(boolean drawBehind, int windowWidth, int windowHeight,
-							   AbstractSampler sampler, float opacity) {
+	public void createSnapshot(boolean drawBehind, AbstractSampler sampler, float opacity) {
 		float zoom = camera.zoom;
 		if (camera.zoom > 2.5) {
 			zoom = 2.5f;
@@ -350,5 +349,22 @@ public class OpusRenderer {
 
 	public void setInputController(InputController inputController) {
 		this.inputController = inputController;
+	}
+
+
+	public int getWindowWidth() {
+		return windowWidth;
+	}
+
+	public void setWindowWidth(int windowWidth) {
+		this.windowWidth = windowWidth;
+	}
+
+	public int getWindowHeight() {
+		return windowHeight;
+	}
+
+	public void setWindowHeight(int windowHeight) {
+		this.windowHeight = windowHeight;
 	}
 }

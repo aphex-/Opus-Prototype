@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.nukethemoon.tools.ani.Ani;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 import com.nukethemoon.tools.ani.BaseAnimation;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.*;
@@ -105,9 +104,6 @@ public class Editor implements ApplicationListener, ChunkListener {
 	private Samplers samplers;
 	private Opus opus;
 
-	private int windowWidth;
-	private int windowHeight;
-
 	private static Bus bus = new Bus(ThreadEnforcer.ANY);
 
 	public static final String DEFAULT_SAMPLER_NAME = 		"EditorDefaultSampler";
@@ -126,6 +122,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	private Image splashScreen;
 	private OpusRenderer renderer;
 
+	private CommandDrawRectangle commandDrawRectangle;
 
 	public static void main(String [] args)	{
 		cfg = new LwjglApplicationConfiguration();
@@ -142,20 +139,15 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	@Override
 	public void create() {
-
 		bus.register(this);
 
 		Styles.init();
 		settings = Settings.load(Config.SETTINGS_FILE);
-
 		cfg.width = settings.screenWidth;
 		cfg.height = settings.screenHeight;
-		windowHeight = cfg.height;
-		windowWidth = cfg.width;
-		Gdx.graphics.setDisplayMode(windowWidth, windowHeight, false);
 
 		STAGE = new Stage(new ScreenViewport());
-		renderer = new OpusRenderer(windowWidth, windowHeight, STAGE);
+		renderer = new OpusRenderer(cfg.width,  cfg.height, STAGE);
 
 		inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(STAGE);
@@ -467,7 +459,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		takeSnapshot(sampler, command.drawBehind, command.opacity);
 	}
 
-	private CommandDrawRectangle commandDrawRectangle;
+
 
 	@Subscribe
 	@SuppressWarnings("unused")
@@ -486,13 +478,16 @@ public class Editor implements ApplicationListener, ChunkListener {
 		commandDrawRectangle = null;
 	}
 
-	private void requestChunks(List<int[]> positions) {
-		int[] regionX = new int[positions.size()];
-		int[] regionY = new int[positions.size()];
-
-		for (int i = 0; i < positions.size(); i++) {
-			regionX[i] = positions.get(i)[0];
-			regionY[i] = positions.get(i)[1];
+	/**
+	 * Requests the chunks with assigned coordinates.
+	 * @param coordinates A list of integer arrays with x and y
+	 */
+	private void requestChunks(List<int[]> coordinates) {
+		int[] regionX = new int[coordinates.size()];
+		int[] regionY = new int[coordinates.size()];
+		for (int i = 0; i < coordinates.size(); i++) {
+			regionX[i] = coordinates.get(i)[0];
+			regionY[i] = coordinates.get(i)[1];
 		}
 		requestChunks(regionX, regionY);
 	}
@@ -503,7 +498,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			return;
 		}
 		ui.getSnapshotTable().setVisible(true);
-		renderer.createSnapshot(drawBehind, windowWidth, windowHeight, sampler, opacity);
+		renderer.createSnapshot(drawBehind, sampler, opacity);
 	}
 
 	@Subscribe
@@ -515,10 +510,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	private void requestFirstChunks(Opus op) {
 		int startSize = 4;
-
 		renderer.dispose();
 		renderer.initLayerSprite(op.getLayers());
-
 		List<int[]> positions = new ArrayList<int[]>();
 		for (int mx = -startSize; mx < startSize; mx ++) {
 			for (int my = -startSize; my < startSize; my ++) {
@@ -529,12 +522,6 @@ public class Editor implements ApplicationListener, ChunkListener {
 			}
 		}
 		requestChunks(positions);
-
-		/*for (int i = 0; i < world.getLayers().size(); i++) {
-			for (Chunk chunk : world.getLayers().get(i).getGeneratedRegions()) {
-				addSprite(chunk, i);
-			}
-		}*/
 	}
 
 	private void requestChunks(int x[], int y[]) {
@@ -600,11 +587,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	@Override
 	public void resize(int width, int height) {
-		windowWidth = width;
-		windowHeight = height;
+		renderer.setWindowWidth(width);
+		renderer.setWindowHeight(height);
 		if (inputController != null) {
-			inputController.setWindowWidth(windowWidth);
-			inputController.setWindowHeight(windowHeight);
+			inputController.setWindowWidth(width);
+			inputController.setWindowHeight(height);
 		}
 		updateWindowSize(null);
 	}
@@ -612,12 +599,12 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@Subscribe
 	@SuppressWarnings("unused")
 	public void updateWindowSize(CommandRefreshLayout c) {
-		STAGE.getViewport().update(windowWidth, windowHeight, true);
+		STAGE.getViewport().update(renderer.getWindowWidth(), renderer.getWindowHeight(), true);
 		if (ui != null) {
-			ui.updatePosition(windowWidth, windowHeight);
+			ui.updatePosition(renderer.getWindowWidth(), renderer.getWindowHeight());
 		}
-		renderer.getCamera().viewportWidth = windowWidth;
-		renderer.getCamera().viewportHeight = windowHeight;
+		renderer.getCamera().viewportWidth = renderer.getWindowWidth();
+		renderer.getCamera().viewportHeight = renderer.getWindowHeight();
 		renderer.getCamera().update();
 	}
 
@@ -639,7 +626,6 @@ public class Editor implements ApplicationListener, ChunkListener {
 			showException(e, "Error deleting sampler " + command.samplerId);
 			return;
 		}
-
 
 		try {
 			List<String> dependencies = new ArrayList<String>();
@@ -749,7 +735,6 @@ public class Editor implements ApplicationListener, ChunkListener {
 	public void render() {
 		int mapSize = -1;
 		List<Layer> layers = null;
-
 		if (opus != null) {
 			mapSize = opus.getConfig().mapSize;
 			layers = opus.getLayers();
@@ -779,8 +764,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@Override
 	public void dispose() {
 		Settings settings = new Settings();
-		settings.screenHeight = windowHeight;
-		settings.screenWidth = windowWidth;
+		settings.screenHeight = renderer.getWindowHeight();
+		settings.screenWidth = renderer.getWindowWidth();
 		if (ui != null) {
 			settings.windows = ui.createWindowSettings();
 		}
@@ -819,15 +804,10 @@ public class Editor implements ApplicationListener, ChunkListener {
 	@Subscribe
 	@SuppressWarnings("unused")
 	public void renameElement(CommandRenameElement command) {
-
-		/*ErrorDialog dialog = new ErrorDialog("Not implemented", UI_SKIN);
-		dialog.show(STAGE);*/
-
 		if (!isValidName(command.newName)) {
 			showErrorDialog("The name is not valid.");
 			return;
 		}
-
 		if (command.type == CommandRenameElement.ElementType.Sampler) {
 			if (samplers.getSampler(command.newName) != null) {
 				showErrorDialog("A sampler with the name " + command.newName + " exists already.");
@@ -837,12 +817,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 				showErrorDialog("You can not rename this sampler. It is a default layer for this editor.");
 				return;
 			}
-
-
 			samplers.changeId(command.oldName, command.newName);
-
 			for (Layer layer : opus.getLayers()) {
-				//Layer.LayerConfig config = (Layer.LayerConfig) layer.getConfig();
 				samplers.changeId(layer, command.oldName, command.newName);
 				try {
 					layer.init();
@@ -850,7 +826,6 @@ public class Editor implements ApplicationListener, ChunkListener {
 					showException(e, "Error renaming layer child.");
 					return;
 				}
-
 			}
 			Editor.post(new EventSamplerPoolChanged());
 		}
