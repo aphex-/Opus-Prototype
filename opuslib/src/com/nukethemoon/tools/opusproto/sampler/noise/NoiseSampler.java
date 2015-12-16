@@ -13,8 +13,8 @@ public class NoiseSampler extends AbstractSampler {
 	private AbstractNoiseAlgorithm noiseAlgorithm;
 	private NoiseConfig noiseConfig;
 
-	public NoiseSampler(AbstractSamplerConfiguration config, double seed, Algorithms pool, Samplers samplers) throws SamplerInvalidConfigException {
-		super(config, seed, pool, samplers);
+	public NoiseSampler(AbstractSamplerConfiguration config, double seed, Algorithms algorithms, Samplers samplers) throws SamplerInvalidConfigException {
+		super(config, seed, algorithms, samplers);
 		noiseConfig = (NoiseConfig) config;
 		init();
 	}

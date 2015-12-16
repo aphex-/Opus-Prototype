@@ -135,7 +135,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	public static String DEFAULT_MASK_SAMPLER_NAME = "EditorDefaultMask";
 	public static String DEFAULT_INTERPRETER_NAME = "EditorDefaultInterpreter";
 
-	private Algorithms noisePool;
+	private Algorithms algorithms;
 	private WorldConfiguration worldConfiguration;
 	private Samplers samplers;
 
@@ -323,13 +323,13 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 		fileOperation = new JsonLoader();
 
-		noisePool = new Algorithms();
+		algorithms = new Algorithms();
 		samplers = new Samplers();
 
 		samplers.addInterpreter(new ColorInterpreter(DEFAULT_INTERPRETER_NAME));
 
 		try {
-			opus = fileOperation.load(samplers, noisePool, Config.PROJECT_PATH + projectName + "/save.json");
+			opus = fileOperation.load(samplers, algorithms, Config.PROJECT_PATH + projectName + "/save.json");
 		} catch (Exception e) {
 			Log.e(Editor.class, e.getMessage());
 			e.printStackTrace();
@@ -353,7 +353,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 		createEditorDefaultSampler();
 
-		ui = new UI(STAGE, cfg, opus, noisePool, samplers, bus, Styles.UI_SKIN, settings);
+		ui = new UI(STAGE, cfg, opus, algorithms, samplers, bus, Styles.UI_SKIN, settings);
 		bus.register(ui);
 
 		generate(opus);
@@ -367,7 +367,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		/*SimplePositionConfig msc = new SimplePositionConfig("se");
 		msc.gridSize = worldConfiguration.mapSize;
 		msc.maximumDistance = msc.gridSize / 2;
-		SimplePositionScattering scattering = new SimplePositionScattering(msc, worldConfiguration.seed, noisePool);
+		SimplePositionScattering scattering = new SimplePositionScattering(msc, worldConfiguration.seed, algorithms);
 		points = scattering.createPoints(
 				-worldConfiguration.mapSize * 3,
 				-worldConfiguration.mapSize * 3,
@@ -382,14 +382,14 @@ public class Editor implements ApplicationListener, ChunkListener {
 		try {
 			samplers.addSampler(
 					new NoiseSampler(new NoiseConfig(DEFAULT_SAMPLER_NAME),
-							worldConfiguration.seed, noisePool, samplers));
+							worldConfiguration.seed, algorithms, samplers));
 
 			MaskedSamplerConfig maskedSamplerConfig = new MaskedSamplerConfig(DEFAULT_MASK_SAMPLER_NAME);
 			maskedSamplerConfig.samplerItems = new ChildSamplerConfig[2];
 			maskedSamplerConfig.samplerItems[0] = new ChildSamplerConfig(DEFAULT_SAMPLER_NAME);
 			maskedSamplerConfig.samplerItems[1] = new ChildSamplerConfig(DEFAULT_SAMPLER_NAME);
 			samplers.addSampler(
-					new MaskedSampler(maskedSamplerConfig, worldConfiguration.seed, noisePool, samplers)
+					new MaskedSampler(maskedSamplerConfig, worldConfiguration.seed, algorithms, samplers)
 			);
 		} catch (SamplerInvalidConfigException e) {
 			showErrorDialog("Error loading editor standard sampler.");
@@ -819,7 +819,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		if (configClass != null) {
 			try {
 				AbstractSamplerConfiguration o = (AbstractSamplerConfiguration) configClass.getConstructors()[0].newInstance(command.name);
-				AbstractSampler sampler = Samplers.create(o, worldConfiguration.seed, noisePool, samplers);
+				AbstractSampler sampler = Samplers.create(o, worldConfiguration.seed, algorithms, samplers);
 				samplers.addSampler(sampler);
 				Editor.post(new EventSamplerPoolChanged());
 				Editor.post(new CommandOpenSamplerEditor(sampler.getConfig().id));
