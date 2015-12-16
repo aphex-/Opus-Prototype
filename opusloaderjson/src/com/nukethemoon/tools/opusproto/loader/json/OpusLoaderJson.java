@@ -26,7 +26,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * This class loads and saves Opus using a json file.
  */
-public class JsonLoader {
+public class OpusLoaderJson {
 
 	private Gson gson;
 	private static Charset CHARSET = StandardCharsets.UTF_8;
@@ -34,7 +34,7 @@ public class JsonLoader {
 	/**
 	 * Creates a new instance.
 	 */
-	public JsonLoader() {
+	public OpusLoaderJson() {
 		gson = new GsonBuilder().setPrettyPrinting().create();
 	}
 

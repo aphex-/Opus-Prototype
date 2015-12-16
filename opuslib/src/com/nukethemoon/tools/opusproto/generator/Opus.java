@@ -43,40 +43,51 @@ public class Opus {
 		chunks.clear();
 	}
 
+	/**
+	 * Requests the chunks at the assigned coordinates. Uses threads
+	 * to create the chunks.
+	 * @param chunkX An array of x coordinates
+	 * @param chunkY An array of y coordinates
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 */
 	public void requestChunks(int[] chunkX, int[] chunkY) throws ExecutionException, InterruptedException {
-
 		SimpleTaskExecutor<Chunk> executor = new SimpleTaskExecutor<Chunk>();
-
 		for (int chunkIndex = 0; chunkIndex < chunkX.length; chunkIndex++) {
-
-			final int x = chunkX[chunkIndex];
-			final int y = chunkY[chunkIndex];
-
-			final Chunk chunk = getChunk(x, y);
-
-			// region al already created
-			if (chunk != null) {
-				onChunkCreated(x, y, chunk);
-			} else {
-				executor.addTask(new Callable<Chunk>() {
-					// other thread
-					@Override
-					public Chunk call() throws Exception {
-						return createChunk(x, y);
-					}
-				}, new SimpleTaskExecutor.ResultListener<Chunk>() {
-					// main thread
-					@Override
-					public void onResult(Chunk result) {
-						chunks.add(result);
-						onChunkCreated(x, y, result);
-					}
-				});
-			}
+			addChunkRequestTask(executor, chunkX[chunkIndex], chunkY[chunkIndex]);
 		}
 		executor.execute();
 	}
 
+	private void addChunkRequestTask(SimpleTaskExecutor<Chunk> executor, final int chunkX, final int chunkY) {
+		final Chunk chunk = getChunk(chunkX, chunkY);
+		// chunk already created
+		if (chunk != null) {
+			onChunkCreated(chunkX, chunkY, chunk);
+		} else {
+			executor.addTask(new Callable<Chunk>() {
+				@Override
+				public Chunk call() throws Exception {
+					// chunk creation thread
+					return createChunk(chunkX, chunkY);
+				}
+			}, new SimpleTaskExecutor.ResultListener<Chunk>() {
+				@Override
+				public void onResult(Chunk result) {
+					// main thread
+					chunks.add(result);
+					onChunkCreated(chunkX, chunkY, result);
+				}
+			});
+		}
+	}
+
+	/**
+	 * This method must be thread safe.
+	 * @param chunkX The x coordinate of a chunk
+	 * @param chunkY The y coordinate of a chunk.
+	 * @return The created chunk.
+	 */
 	private Chunk createChunk(int chunkX, int chunkY) {
 		int offsetX = chunkX * config.mapSize;
 		int offsetY = chunkY * config.mapSize;

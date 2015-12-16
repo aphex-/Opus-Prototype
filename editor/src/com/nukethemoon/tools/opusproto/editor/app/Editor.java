@@ -59,7 +59,7 @@ import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
-import com.nukethemoon.tools.opusproto.loader.json.JsonLoader;
+import com.nukethemoon.tools.opusproto.loader.json.OpusLoaderJson;
 import com.nukethemoon.tools.opusproto.noise.AbstractNoiseAlgorithm;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.noise.algorithms.CellNoise;
@@ -113,7 +113,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	public static Stage STAGE;
 
-	private JsonLoader fileOperation;
+	private OpusLoaderJson fileOperation;
 	private InputMultiplexer inputMultiplexer;
 	private InputController inputController;
 	private float performanceFactor = 1;
@@ -274,7 +274,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			splashScreen.remove();
 		}
 
-		fileOperation = new JsonLoader();
+		fileOperation = new OpusLoaderJson();
 		algorithms = new Algorithms();
 		samplers = new Samplers();
 

@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.nukethemoon.tools.opusproto.editor.Config;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
-import com.nukethemoon.tools.opusproto.loader.json.JsonLoader;
 
 import java.io.File;
 import java.io.FileFilter;
