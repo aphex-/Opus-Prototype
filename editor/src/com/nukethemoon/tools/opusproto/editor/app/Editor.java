@@ -578,8 +578,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 		pixmap.setColor(Color.BLACK);
 		for (int x = 0; x < opus.getConfig().mapSize; x++) {
 			for (int y = 0; y < opus.getConfig().mapSize; y++) {
-				float noise = data[x ][(opus.getConfig().mapSize - 1) - y];
-				pixmap.drawPixel(x, y, interpreter.getType(noise));
+				float noise = data[x][(opus.getConfig().mapSize - 1) - y];
+				int rgb888 = interpreter.getType(noise);
+				if (rgb888 > 0) {
+					pixmap.drawPixel(x, y, ColorInterpreter.toRGBA888(rgb888, 255));
+				}
 			}
 		}
 		return pixmap;

@@ -694,8 +694,8 @@
     }
   ],
   "worldConfig": {
-    "seedString": "0.0",
-    "mapSize": 30,
+    "seedString": "158937436.3857234892",
+    "mapSize": 100,
     "mapsPerRegion": 3,
     "name": "new",
     "layerIds": [
