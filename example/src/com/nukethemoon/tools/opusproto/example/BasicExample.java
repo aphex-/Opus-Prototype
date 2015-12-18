@@ -20,6 +20,9 @@ public class BasicExample implements ChunkListener {
 
 	private Opus opus;
 
+	/**
+	 * The example class.
+	 */
 	public BasicExample() {
 		OpusLoaderJson loader = new OpusLoaderJson();
 
@@ -87,6 +90,10 @@ public class BasicExample implements ChunkListener {
 		}
 	}
 
+	/**
+	 * Starts this example.
+	 * @param args Ignored argument
+	 */
 	public static void main(String[] args) {
 		new BasicExample();
 	}
