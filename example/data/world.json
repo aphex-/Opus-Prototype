@@ -695,8 +695,7 @@
   ],
   "worldConfig": {
     "seedString": "158937436.3857234892",
-    "mapSize": 100,
-    "mapsPerRegion": 3,
+    "chunkSize": 100,
     "name": "new",
     "layerIds": [
       "BaseLayer",

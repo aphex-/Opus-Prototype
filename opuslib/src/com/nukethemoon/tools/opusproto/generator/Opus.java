@@ -89,11 +89,11 @@ public class Opus {
 	 * @return The created chunk.
 	 */
 	private Chunk createChunk(int chunkX, int chunkY) {
-		int offsetX = chunkX * config.mapSize;
-		int offsetY = chunkY * config.mapSize;
+		int offsetX = chunkX * config.chunkSize;
+		int offsetY = chunkY * config.chunkSize;
 
 		Chunk chunk = new Chunk(
-				config.mapSize, config.mapSize,
+				config.chunkSize, config.chunkSize,
 				offsetX, offsetY, layers.size());
 
 		ChunkRequestBuffer dataBuffer = new ChunkRequestBuffer();
@@ -105,15 +105,15 @@ public class Opus {
 
 			float[][] data = layer.createValues(
 					offsetX, offsetY,
-					config.mapSize,
+					config.chunkSize,
 					layer.getConfig().scale,
 					layer.getContainingSeed(),
 					dataBuffer);
 
 			chunk.getLayerData()[layerIndex] = data;
 
-			/*for (int tileX = offsetX; tileX < offsetX + config.mapSize; tileX++) {
-				for (int tileY = offsetY; tileY < offsetY + config.mapSize; tileY++) {
+			/*for (int tileX = offsetX; tileX < offsetX + config.chunkSize; tileX++) {
+				for (int tileY = offsetY; tileY < offsetY + config.chunkSize; tileY++) {
 					float v = getSampleAt(tileX, tileY, layerIndex, dataBuffer);
 					chunk.setAbsolute(tileX, tileY, layerIndex, v);
 				}

@@ -7,7 +7,7 @@ public class OpusConfiguration {
 	}
 
 	public String seedString;
-	public int mapSize = 30;
+	public int chunkSize = 30;
 	public String name;
 	public String[] layerIds;
 

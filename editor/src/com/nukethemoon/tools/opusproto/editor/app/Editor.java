@@ -472,7 +472,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 	public void endRect(CommandDrawMap command) {
 		List<int[]> positions = renderer.getChunkPositionsInRect(command.x1, command.y1,
 				command.x2, command.y2,
-				opus.getConfig().mapSize, performanceFactor);
+				opus.getConfig().chunkSize, performanceFactor);
 		requestChunks(positions);
 
 		commandDrawRectangle = null;
@@ -574,11 +574,11 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 	public Pixmap createPixmap(float data[][], int layerIndex) {
 		AbstractInterpreter interpreter = opus.getLayers().get(layerIndex).getInterpreter();
-		Pixmap pixmap = new Pixmap(opus.getConfig().mapSize, opus.getConfig().mapSize, Pixmap.Format.RGBA8888);
+		Pixmap pixmap = new Pixmap(opus.getConfig().chunkSize, opus.getConfig().chunkSize, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.BLACK);
-		for (int x = 0; x < opus.getConfig().mapSize; x++) {
-			for (int y = 0; y < opus.getConfig().mapSize; y++) {
-				float noise = data[x][(opus.getConfig().mapSize - 1) - y];
+		for (int x = 0; x < opus.getConfig().chunkSize; x++) {
+			for (int y = 0; y < opus.getConfig().chunkSize; y++) {
+				float noise = data[x][(opus.getConfig().chunkSize - 1) - y];
 				int rgb888 = interpreter.getType(noise);
 				if (rgb888 > 0) {
 					pixmap.drawPixel(x, y, ColorInterpreter.toRGBA888(rgb888, 255));
@@ -739,7 +739,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 		int mapSize = -1;
 		List<Layer> layers = null;
 		if (opus != null) {
-			mapSize = opus.getConfig().mapSize;
+			mapSize = opus.getConfig().chunkSize;
 			layers = opus.getLayers();
 		}
 
