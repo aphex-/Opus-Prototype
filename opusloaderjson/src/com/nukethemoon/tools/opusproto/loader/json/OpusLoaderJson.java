@@ -139,7 +139,7 @@ public class OpusLoaderJson {
 		byte[] saveBytes = saveJson.getBytes(CHARSET);
 
 		Files.write(Paths.get(saveFilePath), saveBytes,
-				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE_NEW);
+				StandardOpenOption.TRUNCATE_EXISTING);
 	}
 
 }

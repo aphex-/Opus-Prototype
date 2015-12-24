@@ -1,6 +1,8 @@
 package com.nukethemoon.tools.opusproto.generator;
 
+import com.nukethemoon.tools.opusproto.Config;
 import com.nukethemoon.tools.opusproto.layer.Layer;
+import com.nukethemoon.tools.opusproto.log.Log;
 import com.nukethemoon.tools.opusproto.region.Chunk;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.simpletask.SimpleTaskExecutor;
@@ -60,6 +62,9 @@ public class Opus {
 	}
 
 	private void addChunkRequestTask(SimpleTaskExecutor<Chunk> executor, final int chunkX, final int chunkY) {
+
+		final long startMillis = System.currentTimeMillis();
+
 		final Chunk chunk = getChunk(chunkX, chunkY);
 		// chunk already created
 		if (chunk != null) {
@@ -77,6 +82,10 @@ public class Opus {
 					// main thread
 					chunks.add(result);
 					onChunkCreated(chunkX, chunkY, result);
+
+					if (Config.DEBUG) {
+						Log.i(Opus.class, "Created chunk x " + chunkX + " y " + chunkY + " in " + (System.currentTimeMillis() - startMillis) + " millis.");
+					}
 				}
 			});
 		}
