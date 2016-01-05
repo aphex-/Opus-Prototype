@@ -6,11 +6,10 @@ import java.util.List;
 public abstract class AbstractInterpreter {
 
 	public String id;
-	public List<? extends InterpreterItem> it;
+	public List<InterpreterItem> it = new ArrayList<InterpreterItem>();
 
 	public AbstractInterpreter(String id) {
 		this.id = id;
-		it = new ArrayList<>();
 	}
 
 	public int getType(float sampleValue) {
