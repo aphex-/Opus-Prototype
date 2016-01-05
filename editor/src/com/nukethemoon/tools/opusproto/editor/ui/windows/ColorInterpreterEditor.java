@@ -14,6 +14,7 @@ import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.BaseDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.RenameDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.layer.interpreter.ColorInterpreterItemForm;
+import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreterItem;
 
@@ -81,8 +82,9 @@ public class ColorInterpreterEditor extends ClosableWindow {
 
 	private void generateItemList() {
 		itemContainer.clear();
-		for (final ColorInterpreterItem item : interpreter.items) {
-			ColorInterpreterItemForm colorInterpreterItemForm = new ColorInterpreterItemForm(skin, item);
+		for (final AbstractInterpreter.InterpreterItem item : interpreter.items) {
+			ColorInterpreterItemForm colorInterpreterItemForm = new ColorInterpreterItemForm(skin,
+					(ColorInterpreterItem) item);
 			itemContainer.add(colorInterpreterItemForm);
 			colorInterpreterItemForm.setColorItemListener(new ColorInterpreterItemForm.ColorItemListener() {
 				@Override
@@ -96,16 +98,18 @@ public class ColorInterpreterEditor extends ClosableWindow {
 				public void onChange(ColorInterpreterItemForm form) {
 					if (AbstractChangeForm.containsValidHexColor(form.getStartColorTextField())) {
 						Color color = AbstractChangeForm.parseColor(form.getStartColorTextField().getText());
-						item.starColorR = color.r;
-						item.starColorG = color.g;
-						item.starColorB = color.b;
+						ColorInterpreterItem cItem = (ColorInterpreterItem) item;
+						cItem.starColorR = color.r;
+						cItem.starColorG = color.g;
+						cItem.starColorB = color.b;
 					}
 
 					if (AbstractChangeForm.containsValidHexColor(form.getEndColorTextField())) {
 						Color color = AbstractChangeForm.parseColor(form.getEndColorTextField().getText());
-						item.endColorR = color.r;
-						item.endColorG = color.g;
-						item.endColorB = color.b;
+						ColorInterpreterItem cItem = (ColorInterpreterItem) item;
+						cItem.endColorR = color.r;
+						cItem.endColorG = color.g;
+						cItem.endColorB = color.b;
 					}
 
 					if (AbstractChangeForm.containsValidFloat(form.getStartValueTextField())) {
