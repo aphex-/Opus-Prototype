@@ -13,7 +13,7 @@ import com.nukethemoon.tools.opusproto.editor.message.interpreter.CommandOpenInt
 import com.nukethemoon.tools.opusproto.editor.message.interpreter.EventInterpreterPoolChanged;
 import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.NewInterpreterDialog;
-import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
+import com.nukethemoon.tools.opusproto.interpreter.TypeInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.squareup.otto.Subscribe;
 
@@ -52,8 +52,8 @@ public class ColorInterpreterList extends ClosableWindow {
 
 	private void generateList() {
 		container.clear();
-		AbstractInterpreter[] list = loader.createInterpreterList();
-		for (AbstractInterpreter interpreter : list) {
+		TypeInterpreter[] list = loader.createInterpreterList();
+		for (TypeInterpreter interpreter : list) {
 			if (interpreter instanceof ColorInterpreter) {
 				addNewInterpreter((ColorInterpreter) interpreter);
 			}

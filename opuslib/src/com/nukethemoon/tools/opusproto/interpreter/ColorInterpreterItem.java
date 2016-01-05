@@ -1,6 +1,6 @@
 package com.nukethemoon.tools.opusproto.interpreter;
 
-public class ColorInterpreterItem extends AbstractInterpreter.InterpreterItem {
+public class ColorInterpreterItem extends TypeInterpreter.InterpreterItem {
 
 	public float starColorR = 0;
 	public float starColorG = 0;

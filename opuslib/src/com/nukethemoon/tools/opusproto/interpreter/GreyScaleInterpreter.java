@@ -2,7 +2,7 @@ package com.nukethemoon.tools.opusproto.interpreter;
 
 
 
-public class GreyScaleInterpreter extends AbstractInterpreter {
+public class GreyScaleInterpreter extends TypeInterpreter {
 
 
 	public GreyScaleInterpreter(String id) {

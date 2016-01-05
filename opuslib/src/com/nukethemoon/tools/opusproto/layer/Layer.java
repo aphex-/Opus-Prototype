@@ -2,7 +2,7 @@ package com.nukethemoon.tools.opusproto.layer;
 
 import com.nukethemoon.tools.opusproto.sampler.Samplers;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
-import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
+import com.nukethemoon.tools.opusproto.interpreter.TypeInterpreter;
 import com.nukethemoon.tools.opusproto.region.ChunkRequestBuffer;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
 import com.nukethemoon.tools.opusproto.sampler.ChildSamplerConfig;
@@ -15,7 +15,7 @@ public class Layer extends AbstractSampler {
 	private LayerConfig layerConfig;
 	private Samplers samplers;
 
-	private AbstractInterpreter interpreter;
+	private TypeInterpreter interpreter;
 
 	public boolean active = true; // for debug
 
@@ -141,7 +141,7 @@ public class Layer extends AbstractSampler {
 	}
 
 
-	public AbstractInterpreter getInterpreter() {
+	public TypeInterpreter getInterpreter() {
 		return interpreter;
 	}
 

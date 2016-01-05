@@ -3,7 +3,7 @@ package com.nukethemoon.tools.opusproto.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ColorInterpreter extends AbstractInterpreter {
+public class ColorInterpreter extends TypeInterpreter {
 
 	public List<ColorInterpreterItem> items = new ArrayList<ColorInterpreterItem>();
 

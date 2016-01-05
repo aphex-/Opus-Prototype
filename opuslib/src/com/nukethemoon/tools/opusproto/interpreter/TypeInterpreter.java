@@ -3,12 +3,12 @@ package com.nukethemoon.tools.opusproto.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractInterpreter {
+public class TypeInterpreter {
 
 	public String id;
 	public List<InterpreterItem> it = new ArrayList<InterpreterItem>();
 
-	public AbstractInterpreter(String id) {
+	public TypeInterpreter(String id) {
 		this.id = id;
 	}
 

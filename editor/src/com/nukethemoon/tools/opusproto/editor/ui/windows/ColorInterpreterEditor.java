@@ -14,7 +14,7 @@ import com.nukethemoon.tools.opusproto.editor.ui.Styles;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.BaseDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.dialogs.RenameDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.layer.interpreter.ColorInterpreterItemForm;
-import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
+import com.nukethemoon.tools.opusproto.interpreter.TypeInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreterItem;
 
@@ -82,7 +82,7 @@ public class ColorInterpreterEditor extends ClosableWindow {
 
 	private void generateItemList() {
 		itemContainer.clear();
-		for (final AbstractInterpreter.InterpreterItem item : interpreter.items) {
+		for (final TypeInterpreter.InterpreterItem item : interpreter.items) {
 			ColorInterpreterItemForm colorInterpreterItemForm = new ColorInterpreterItemForm(skin,
 					(ColorInterpreterItem) item);
 			itemContainer.add(colorInterpreterItemForm);

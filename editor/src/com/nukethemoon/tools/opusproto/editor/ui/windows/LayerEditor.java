@@ -27,7 +27,7 @@ import com.nukethemoon.tools.opusproto.editor.ui.dialogs.RenameDialog;
 import com.nukethemoon.tools.opusproto.editor.ui.layer.LayerSamplerList;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerInvalidConfigException;
 import com.nukethemoon.tools.opusproto.generator.Opus;
-import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
+import com.nukethemoon.tools.opusproto.interpreter.TypeInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
@@ -39,7 +39,7 @@ import java.util.List;
 public class LayerEditor extends ClosableWindow implements AbstractChangeForm.ChangedListener {
 
 	private final Label layerName;
-	private final SelectBox<AbstractInterpreter> interpreterSelect;
+	private final SelectBox<TypeInterpreter> interpreterSelect;
 
 	private LayerSamplerList samplerList;
 	private Layer layer;
@@ -97,7 +97,7 @@ public class LayerEditor extends ClosableWindow implements AbstractChangeForm.Ch
 		Label interpreterTitle = new Label("Interpreter", skin);
 		interpreterTable.add(interpreterTitle).left().expand().fill();
 
-		interpreterSelect = new SelectBox<AbstractInterpreter>(Styles.INTERPRETER_SELECT_BOX_SKIN);
+		interpreterSelect = new SelectBox<TypeInterpreter>(Styles.INTERPRETER_SELECT_BOX_SKIN);
 		interpreterSelect.setItems(pool.createInterpreterList());
 		interpreterSelect.addListener(new ChangeListener() {
 			@Override

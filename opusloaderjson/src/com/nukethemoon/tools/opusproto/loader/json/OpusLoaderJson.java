@@ -3,7 +3,7 @@ package com.nukethemoon.tools.opusproto.loader.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nukethemoon.tools.opusproto.Config;
-import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
+import com.nukethemoon.tools.opusproto.interpreter.TypeInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSampler;
@@ -104,7 +104,7 @@ public class OpusLoaderJson {
 	 */
 	public void save(Samplers samplers, Opus opus, String saveFilePath) throws IOException {
 		PersistenceOpus save = new PersistenceOpus();
-		AbstractInterpreter[] interpreterList = samplers.createInterpreterList();
+		TypeInterpreter[] interpreterList = samplers.createInterpreterList();
 		save.interpreters = new ColorInterpreter[interpreterList.length];
 		for (int i = 0; i < interpreterList.length; i++) {
 			save.interpreters[i] = (ColorInterpreter) interpreterList[i];

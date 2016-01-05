@@ -55,7 +55,7 @@ import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.generator.ChunkListener;
 import com.nukethemoon.tools.opusproto.generator.OpusConfiguration;
 import com.nukethemoon.tools.opusproto.generator.Opus;
-import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
+import com.nukethemoon.tools.opusproto.interpreter.TypeInterpreter;
 import com.nukethemoon.tools.opusproto.interpreter.ColorInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
@@ -573,7 +573,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 
 	public Pixmap createPixmap(float data[][], int layerIndex) {
-		AbstractInterpreter interpreter = opus.getLayers().get(layerIndex).getInterpreter();
+		TypeInterpreter interpreter = opus.getLayers().get(layerIndex).getInterpreter();
 		Pixmap pixmap = new Pixmap(opus.getConfig().chunkSize, opus.getConfig().chunkSize, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.BLACK);
 		for (int x = 0; x < opus.getConfig().chunkSize; x++) {

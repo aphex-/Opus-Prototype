@@ -3,7 +3,7 @@ package com.nukethemoon.tools.opusproto.sampler;
 import com.nukethemoon.tools.opusproto.Config;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerRecursionException;
 import com.nukethemoon.tools.opusproto.exceptions.SamplerUnresolvedDependencyException;
-import com.nukethemoon.tools.opusproto.interpreter.AbstractInterpreter;
+import com.nukethemoon.tools.opusproto.interpreter.TypeInterpreter;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.layer.LayerConfig;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
@@ -33,7 +33,7 @@ import java.util.Map;
 public class Samplers {
 
 	private List<AbstractSampler> loadedSamplers = new ArrayList<AbstractSampler>();
-	private List<AbstractInterpreter> loadedInterpreter = new ArrayList<AbstractInterpreter>();
+	private List<TypeInterpreter> loadedInterpreter = new ArrayList<TypeInterpreter>();
 
 	public static Map<Class<? extends AbstractSampler>, Class<? extends AbstractSamplerConfiguration>>
 			SAMPLER_TO_CONFIG = new HashMap<Class<? extends AbstractSampler>, Class<? extends AbstractSamplerConfiguration>>();
@@ -186,7 +186,7 @@ public class Samplers {
 		return doesASamplerDependOn(sampler, list, foundDependencies, 0);
 	}
 
-	public boolean doesALayerDependOn(AbstractInterpreter interpreter, List<Layer> layers) {
+	public boolean doesALayerDependOn(TypeInterpreter interpreter, List<Layer> layers) {
 		for (Layer l : layers) {
 			if (((LayerConfig)l.getConfig()).interpreterId.equals(interpreter.id)) {
 				return true;
@@ -316,7 +316,7 @@ public class Samplers {
 		return list;
 	}
 
-	public void addInterpreter(AbstractInterpreter interpreter) {
+	public void addInterpreter(TypeInterpreter interpreter) {
 		if (getInterpreter(interpreter.id) == null) {
 			loadedInterpreter.add(interpreter);
 		} else {
@@ -325,8 +325,8 @@ public class Samplers {
 
 	}
 
-	public AbstractInterpreter getInterpreter(String id) {
-		for (AbstractInterpreter interpreter : loadedInterpreter) {
+	public TypeInterpreter getInterpreter(String id) {
+		for (TypeInterpreter interpreter : loadedInterpreter) {
 			if (interpreter.id.equals(id)) {
 				return interpreter;
 			}
@@ -334,10 +334,10 @@ public class Samplers {
 		return null;
 	}
 
-	public AbstractInterpreter[] createInterpreterList() {
-		AbstractInterpreter[] list = new AbstractInterpreter[loadedInterpreter.size()];
+	public TypeInterpreter[] createInterpreterList() {
+		TypeInterpreter[] list = new TypeInterpreter[loadedInterpreter.size()];
 		int i = 0;
-		for (AbstractInterpreter entry : loadedInterpreter) {
+		for (TypeInterpreter entry : loadedInterpreter) {
 			list[i] = entry;
 			i++;
 		}
@@ -345,7 +345,7 @@ public class Samplers {
 	}
 
 	public void removeInterpreter(String id) {
-		AbstractInterpreter interpreter = getInterpreter(id);
+		TypeInterpreter interpreter = getInterpreter(id);
 		loadedInterpreter.remove(interpreter);
 	}
 
