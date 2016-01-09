@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
@@ -138,7 +139,13 @@ public class OpusLoaderJson {
 		String saveJson = gson.toJson(save, PersistenceOpus.class);
 		byte[] saveBytes = saveJson.getBytes(CHARSET);
 
-		Files.write(Paths.get(saveFilePath), saveBytes,
+
+		Path path = Paths.get(saveFilePath);
+		if (!Files.exists(path)) {
+			Files.createFile(path);
+		}
+
+		Files.write(path, saveBytes,
 				StandardOpenOption.TRUNCATE_EXISTING);
 	}
 
