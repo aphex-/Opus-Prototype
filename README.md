@@ -9,3 +9,5 @@ Created by www.nuke-the-moon.com
 
 This repo was released in a hurry. The library is work in progress. Builds of the editor will be added soon.
 For more information about Opus Prototype read the documentation: editor/data/docu/index.html
+
+Licenced under the Apache License Version 2.0
