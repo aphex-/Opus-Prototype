@@ -46,8 +46,9 @@ public class OpusLoaderJson {
 	 * @throws SamplerRecursionException
 	 * @throws IOException
 	 */
-	public Opus load(String filePath) throws SamplerInvalidConfigException, SamplerUnresolvedDependencyException, SamplerRecursionException, IOException {
-		return load(new Samplers(), new Algorithms(), filePath);
+	public Opus load(String filePath) throws SamplerInvalidConfigException, SamplerUnresolvedDependencyException,
+			SamplerRecursionException, IOException {
+		return load(new Samplers(), new Algorithms(), readFile(filePath));
 	}
 
 	/**
@@ -57,22 +58,20 @@ public class OpusLoaderJson {
 	 * are initialized before.
 	 * @param samplers The Samplers to use.
 	 * @param algorithms The Algorithms to use.
-	 * @param filePath The relative path to the json file.
+	 * @param bytes The content of a json file (utf8) in bytes.
 	 * @return The initialized WorldGenerator.
 	 * @throws SamplerInvalidConfigException
 	 * @throws SamplerUnresolvedDependencyException
 	 * @throws SamplerRecursionException
 	 * @throws IOException
 	 */
-	public Opus load(Samplers samplers, Algorithms algorithms, String filePath)
+	public Opus load(Samplers samplers, Algorithms algorithms, byte[] bytes)
 			throws SamplerInvalidConfigException, SamplerUnresolvedDependencyException,
 			SamplerRecursionException, IOException {
 
 		samplers = samplers == null ? new Samplers() : samplers;
 		algorithms = algorithms == null ? new Algorithms() : algorithms;
 
-		File file = new File(filePath);
-		byte[] bytes = read(file);
 		PersistenceOpus persistence = gson.fromJson(new String(bytes, CHARSET), PersistenceOpus.class);
 		OpusConfiguration opusConfiguration = persistence.worldConfig;
 		opusConfiguration.seed = Double.parseDouble(opusConfiguration.seedString);
@@ -95,13 +94,7 @@ public class OpusLoaderJson {
 		return new Opus(opusConfiguration, layerList);
 	}
 
-	/**
-	 * Saves Opus to a json file located at the assigned path.
-	 * @param samplers The Samplers to save.
-	 * @param opus The Opus to save.
-	 * @param saveFilePath The file path to save to.
-	 */
-	public void save(Samplers samplers, Opus opus, String saveFilePath) throws IOException {
+	public byte[] createBytes(Samplers samplers, Opus opus) throws IOException {
 		PersistenceOpus save = new PersistenceOpus();
 		TypeInterpreter[] interpreterList = samplers.createInterpreterList();
 		save.interpreters = new ColorInterpreter[interpreterList.length];
@@ -135,19 +128,37 @@ public class OpusLoaderJson {
 		save.version = Config.VERSION;
 
 		String saveJson = gson.toJson(save, PersistenceOpus.class);
-		byte[] saveBytes = saveJson.getBytes(CHARSET);
+		return saveJson.getBytes(CHARSET);
+	}
 
-
+	/**
+	 * Saves Opus to a json file located at the assigned path.
+	 * @param samplers The Samplers to save.
+	 * @param opus The Opus to save.
+	 * @param saveFilePath The file path to save to.
+	 */
+	public void save(Samplers samplers, Opus opus, String saveFilePath) throws IOException {
 		File file = new File(saveFilePath);
 		if (!file.exists()) {
 			file.createNewFile();
 		}
-		write(file, saveBytes);
+		writeFile(file, createBytes(samplers, opus));
 	}
 
+	// == file helper functions ==
+	public void writeFile(File file, byte[] bytes) throws IOException {
+		FileOutputStream fs = new FileOutputStream(file);
+		BufferedOutputStream bs = new BufferedOutputStream(fs);
+		bs.write(bytes);
+		bs.close();
+	}
 
+	public byte[] readFile(String filePath) throws IOException {
+		File file = new File(filePath);
+		return readFile(file);
+	}
 
-	public byte[] read(File file) throws IOException {
+	public byte[] readFile(File file) throws IOException {
 		byte[] buffer = new byte[(int) file.length()];
 		InputStream ios = null;
 		try {
@@ -165,12 +176,4 @@ public class OpusLoaderJson {
 		}
 		return buffer;
 	}
-
-	public void write(File file, byte[] bytes) throws IOException {
-		FileOutputStream fs = new FileOutputStream(file);
-		BufferedOutputStream bs = new BufferedOutputStream(fs);
-		bs.write(bytes);
-		bs.close();
-	}
-
 }

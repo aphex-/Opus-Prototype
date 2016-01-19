@@ -284,7 +284,8 @@ public class Editor implements ApplicationListener, ChunkListener {
 			String projectFile = Config.PROJECT_PATH + projectName + Config.SAVE_FILE_NAME;
 			if (Gdx.files.local(projectFile).exists()) {
 
-				opus = fileOperation.load(samplers, algorithms, projectFile);
+				byte[] bytes = fileOperation.readFile(projectFile);
+				opus = fileOperation.load(samplers, algorithms, bytes);
 				createEditorDefaultSampler(samplers, algorithms, opus.getConfig().seed);
 			} else {
 				// initialize a new project
