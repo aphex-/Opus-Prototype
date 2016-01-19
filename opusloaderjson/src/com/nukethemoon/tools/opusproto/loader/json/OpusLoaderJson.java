@@ -16,13 +16,10 @@ import com.nukethemoon.tools.opusproto.generator.Opus;
 import com.nukethemoon.tools.opusproto.layer.Layer;
 import com.nukethemoon.tools.opusproto.noise.Algorithms;
 import com.nukethemoon.tools.opusproto.sampler.AbstractSamplerConfiguration;
-import java.io.IOException;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 /**
  * This class loads and saves Opus using a json file.
@@ -74,7 +71,8 @@ public class OpusLoaderJson {
 		samplers = samplers == null ? new Samplers() : samplers;
 		algorithms = algorithms == null ? new Algorithms() : algorithms;
 
-		byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+		File file = new File(filePath);
+		byte[] bytes = read(file);
 		PersistenceOpus persistence = gson.fromJson(new String(bytes, CHARSET), PersistenceOpus.class);
 		OpusConfiguration opusConfiguration = persistence.worldConfig;
 		opusConfiguration.seed = Double.parseDouble(opusConfiguration.seedString);
@@ -140,13 +138,39 @@ public class OpusLoaderJson {
 		byte[] saveBytes = saveJson.getBytes(CHARSET);
 
 
-		Path path = Paths.get(saveFilePath);
-		if (!Files.exists(path)) {
-			Files.createFile(path);
+		File file = new File(saveFilePath);
+		if (!file.exists()) {
+			file.createNewFile();
 		}
+		write(file, saveBytes);
+	}
 
-		Files.write(path, saveBytes,
-				StandardOpenOption.TRUNCATE_EXISTING);
+
+
+	public byte[] read(File file) throws IOException {
+		byte[] buffer = new byte[(int) file.length()];
+		InputStream ios = null;
+		try {
+			ios = new FileInputStream(file);
+			if (ios.read(buffer) == -1) {
+				throw new IOException(
+						"EOF reached while trying to read the whole file");
+			}
+		} finally {
+			try {
+				if (ios != null)
+					ios.close();
+			} catch (IOException e) {
+			}
+		}
+		return buffer;
+	}
+
+	public void write(File file, byte[] bytes) throws IOException {
+		FileOutputStream fs = new FileOutputStream(file);
+		BufferedOutputStream bs = new BufferedOutputStream(fs);
+		bs.write(bytes);
+		bs.close();
 	}
 
 }
