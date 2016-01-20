@@ -30,6 +30,8 @@ public class Opus {
 				}
 			}
 		}
+		Log.i(Opus.class, "Using " + Runtime.getRuntime().availableProcessors() + " threads.");
+
 	}
 
 	private Chunk getChunk(int chunkX, int chunkY) {
@@ -82,10 +84,6 @@ public class Opus {
 					// main thread
 					chunks.add(result);
 					onChunkCreated(chunkX, chunkY, result);
-
-					if (Config.DEBUG) {
-						Log.i(Opus.class, "Created chunk x " + chunkX + " y " + chunkY + " in " + (System.currentTimeMillis() - startMillis) + " millis.");
-					}
 				}
 			});
 		}
