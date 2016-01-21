@@ -41,6 +41,26 @@ public class SimpleTaskExecutor<T> {
 	}
 
 	/**
+	 * Creates an new instance.
+	 * @param threadCount The count of threads to use.
+	 * @param proprity The execution priority of the threads.
+	 */
+	public SimpleTaskExecutor(int threadCount, final int priority) {
+		ThreadFactory threadFactory = new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread thread = new Thread();
+				thread.setPriority(priority);
+				return thread;
+			}
+		};
+
+		service = Executors.newFixedThreadPool(threadCount, threadFactory);
+		tasksToResult = new HashMap<Callable<T>, ResultListener<T>>();
+		futureToListener = new HashMap<Future<T>, ResultListener<T>>();
+	}
+
+	/**
 	 * Executes the added tasks.
 	 * Can only be called once for an instance.
 	 * @return True if execution was done.

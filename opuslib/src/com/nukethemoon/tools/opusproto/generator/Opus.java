@@ -20,6 +20,8 @@ public class Opus {
 	private List<Layer> layers = new ArrayList<Layer>();
 	private List<Chunk> chunks = new ArrayList<Chunk>();
 
+	private int threadPriority = Thread.NORM_PRIORITY;
+
 	public Opus(OpusConfiguration config, Layer[] layers) {
 		this.config = config;
 		for (int layerIndex = 0; layerIndex < config.layerIds.length; layerIndex++) {
@@ -32,6 +34,10 @@ public class Opus {
 		}
 		Log.i(Opus.class, "Using " + Runtime.getRuntime().availableProcessors() + " threads.");
 
+	}
+
+	public void setThreadPriority(int priority) {
+		this.threadPriority = priority;
 	}
 
 	private Chunk getChunk(int chunkX, int chunkY) {
@@ -56,7 +62,7 @@ public class Opus {
 	 * @throws InterruptedException
 	 */
 	public void requestChunks(int[] chunkX, int[] chunkY) throws ExecutionException, InterruptedException {
-		SimpleTaskExecutor<Chunk> executor = new SimpleTaskExecutor<Chunk>();
+		SimpleTaskExecutor<Chunk> executor = new SimpleTaskExecutor<Chunk>(Runtime.getRuntime().availableProcessors(), threadPriority);
 		for (int chunkIndex = 0; chunkIndex < chunkX.length; chunkIndex++) {
 			addChunkRequestTask(executor, chunkX[chunkIndex], chunkY[chunkIndex]);
 		}
