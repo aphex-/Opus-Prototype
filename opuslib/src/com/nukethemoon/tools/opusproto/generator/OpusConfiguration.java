@@ -14,6 +14,9 @@ public class OpusConfiguration {
 	public String name;
 	public String[] layerIds;
 
+	public boolean bufferChunks = true;
+	public boolean bufferLayers = true;
+
 	public transient double seed;
 
 }
