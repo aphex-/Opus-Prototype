@@ -103,7 +103,8 @@ public class Combined extends AbstractSampler {
 
 		float modifiedScale = scaleFactor * config.scale;
 
-		float[][] data = new float[size][size];
+		int resSize = (int) (size / resolution);
+		float[][] data = new float[resSize][resSize];
 
 		for (int i = 0; i < samplers.length; i++) {
 			if (i < combinedConfig.samplerItems.length) {

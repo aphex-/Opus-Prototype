@@ -105,6 +105,7 @@ public class Opus {
 	 * @return The created chunk.
 	 */
 	public Chunk createChunk(int chunkX, int chunkY, float resolution) {
+		resolution = 2;
 		Chunk buffered = getChunk(chunkX, chunkY, resolution);
 		if (buffered != null) {
 			return buffered;
