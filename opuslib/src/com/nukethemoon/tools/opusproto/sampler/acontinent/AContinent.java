@@ -25,7 +25,8 @@ public class AContinent extends AbstractSampler {
 
 	@Override
 	protected float[][] bufferedCreateValues(float x, float y, int size,
-											 float scaleFactor, double seedModifier, ChunkRequestBuffer buffer) {
+											 float scaleFactor, float resolution,
+											 double seedModifier, ChunkRequestBuffer buffer) {
 
 		float[][][] tmpSampleData = new float[c.iterations][][];
 		float[][] data = new float[size][size];
@@ -43,7 +44,7 @@ public class AContinent extends AbstractSampler {
 			double tmpSeed = getModifiedSeed(seeds[i], modifiedSeed);
 
 			tmpSampleData[i] = noiseAlgorithm.createData(x, y,
-					size, tmpSeed, levelScale);
+					size, tmpSeed, levelScale, resolution);
 
 			multiply(tmpSampleData[i], levelHeight);
 			for (int xTmp = 0; xTmp < size; xTmp++) {

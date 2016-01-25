@@ -97,7 +97,7 @@ public class MapGenTest implements ApplicationListener  {
 	private Sprite createDiamondSprite(int xIn, int yIn, int size) {
 		//float[][] map = MidpointDisplacement.createDataMap(xIn, yIn, size, size, 7, 0);
 
-		float[][] map = new CellNoise(new Algorithms()).createData(xIn, yIn, size, 2344, 1);
+		float[][] map = new CellNoise(new Algorithms()).createData(xIn, yIn, size, 1, 2344, 1);
 
 		Pixmap pixmap = new Pixmap(map.length, map[0].length, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.BLACK);

@@ -94,7 +94,9 @@ public class Combined extends AbstractSampler {
 	@Override
 	public float[][] bufferedCreateValues(float x, float y,
 										  int size,
-										  float scaleFactor, double seedModifier,
+										  float scaleFactor,
+										  float resolution,
+										  double seedModifier,
 										  ChunkRequestBuffer buffer) {
 
 		float[][][] tmpSampleData = new float[samplers.length][][];
@@ -114,6 +116,7 @@ public class Combined extends AbstractSampler {
 							x, y,
 							size,
 							tmpScale,
+							resolution,
 							tmpSeed,
 							buffer);
 					if (combinedConfig.samplerItems[i].invert) {

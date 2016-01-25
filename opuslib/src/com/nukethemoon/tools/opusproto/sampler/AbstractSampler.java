@@ -36,26 +36,30 @@ public abstract class AbstractSampler implements ISeedContainer {
 
 	protected abstract float[][] bufferedCreateValues(float x, float y,
 													  int size,
-													  float scaleFactor, double seedModifier,
+													  float scaleFactor,
+													  float resolution,
+													  double seedModifier,
 													  ChunkRequestBuffer buffer);
 
 	public float[][] createValues(float x, float y,
 								  int size,
-								  float scaleFactor, double seedModifier,
+								  float scaleFactor,
+								  float resolution,
+								  double seedModifier,
 								  ChunkRequestBuffer buffer) {
 
 		if (buffer != null) {
-			float[][] bufferedData = buffer.getSamplerData(getConfig().id, seedModifier, scaleFactor);
+			float[][] bufferedData = buffer.getSamplerData(getConfig().id, seedModifier, scaleFactor, resolution);
 			if (bufferedData != null) {
 				return bufferedData;
 			}
 		}
 
-		float[][] data = bufferedCreateValues(x, y, size, scaleFactor, seedModifier, buffer);
+		float[][] data = bufferedCreateValues(x, y, size, scaleFactor, resolution, seedModifier, buffer);
 		compute(data);
 		modify(data);
 		if (buffer != null) {
-			buffer.addSamplerData(getConfig().id, seedModifier, scaleFactor, data);
+			buffer.addSamplerData(getConfig().id, seedModifier, scaleFactor, resolution, data);
 		}
 		return data;
 	}

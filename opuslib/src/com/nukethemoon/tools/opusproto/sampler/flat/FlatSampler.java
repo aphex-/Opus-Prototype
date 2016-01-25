@@ -18,7 +18,9 @@ public class FlatSampler extends AbstractSampler {
 	}
 
 	@Override
-	public float[][] bufferedCreateValues(float x, float y, int size, float scaleFactor, double seedModifier, ChunkRequestBuffer buffer) {
+	public float[][] bufferedCreateValues(float x, float y, int size, float scaleFactor,
+										  float resolution,
+										  double seedModifier, ChunkRequestBuffer buffer) {
 		float[][] data = new float[size][size];
 		for (int xTmp = 0; xTmp < data.length; xTmp++) {
 			for (int yTmp = 0; yTmp < data[xTmp].length; yTmp++) {

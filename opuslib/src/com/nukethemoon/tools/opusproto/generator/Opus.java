@@ -39,13 +39,17 @@ public class Opus {
 		this.threadPriority = priority;
 	}
 
-	private Chunk getChunk(int chunkX, int chunkY) {
+	private Chunk getChunk(int chunkX, int chunkY, float resolution) {
 		for (Chunk c : chunks) {
-			if (c.getChunkX() == chunkX && c.getChunkY() == chunkY) {
+			if (c.getChunkX() == chunkX && c.getChunkY() == chunkY && c.getResolution() == resolution) {
 				return c;
 			}
 		}
 		return null;
+	}
+
+	private Chunk getChunk(int chunkX, int chunkY) {
+		return getChunk(chunkX, chunkY, 1);
 	}
 
 	public void clear() {
@@ -96,14 +100,18 @@ public class Opus {
 		}
 	}
 
+	public Chunk createChunk(int chunkX, int chunkY) {
+		return createChunk(chunkX, chunkY, 1);
+	}
+
 	/**
 	 * This method must be thread safe.
 	 * @param chunkX The x coordinate of a chunk
 	 * @param chunkY The y coordinate of a chunk.
 	 * @return The created chunk.
 	 */
-	public Chunk createChunk(int chunkX, int chunkY) {
-		Chunk buffered = getChunk(chunkX, chunkY);
+	public Chunk createChunk(int chunkX, int chunkY, float resolution) {
+		Chunk buffered = getChunk(chunkX, chunkY, resolution);
 		if (buffered != null) {
 			return buffered;
 		}
@@ -116,35 +124,25 @@ public class Opus {
 
 		Chunk chunk = new Chunk(
 				config.chunkSize, config.chunkSize,
-				chunkOffsetX, chunkOffsetY, layers.size());
+				chunkOffsetX, chunkOffsetY, layers.size(), resolution);
 
 
-		ChunkRequestBuffer dataBuffer = null;
+		ChunkRequestBuffer dataBuffer = null; // buffer for this request to avoid the creation of a layer twice
 		if (config.bufferLayers) {
 			dataBuffer = new ChunkRequestBuffer();
 		}
 
 		for (int layerIndex = 0; layerIndex < layers.size(); layerIndex++) {
-
-
 			Layer layer = layers.get(layerIndex);
-
 			float[][] data = layer.createValues(
 					requestOffsetX, requestOffsetY,
 					config.chunkSize,
 					layer.getConfig().scale,
+					resolution,
 					layer.getContainingSeed(),
 					dataBuffer);
 
 			chunk.getLayerData()[layerIndex] = data;
-
-			/*for (int tileX = offsetX; tileX < offsetX + config.chunkSize; tileX++) {
-				for (int tileY = offsetY; tileY < offsetY + config.chunkSize; tileY++) {
-					float v = getSampleAt(tileX, tileY, layerIndex, dataBuffer);
-					chunk.setAbsolute(tileX, tileY, layerIndex, v);
-				}
-			}*/
-
 		}
 		if (config.bufferLayers) {
 			dataBuffer.clear();

@@ -38,7 +38,8 @@ public class SimplePositionScattering extends AbstractGeometrySampler {
 	}
 
 	@Override
-	protected float[][] bufferedCreateValues(float x, float y, int size, float scaleFactor, double seedModifier, ChunkRequestBuffer buffer) {
+	protected float[][] bufferedCreateValues(float x, float y, int size, float scaleFactor, float resolution,
+											 double seedModifier, ChunkRequestBuffer buffer) {
 		return new float[0][];
 	}
 

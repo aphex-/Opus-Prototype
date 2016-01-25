@@ -1,10 +1,5 @@
 package com.nukethemoon.tools.opusproto.region;
 
-import com.nukethemoon.tools.opusproto.gemoetry.AbstractGeometryData;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Chunk {
 
 	private int width;
@@ -13,15 +8,15 @@ public class Chunk {
 	private int offsetY;
 
 	private float[][][] layerData;
-	private List<AbstractGeometryData> geometryData;
+	private float resolution;
 
 
-	public Chunk(int width, int height, int offsetX, int offsetY, int layerCount) {
+	public Chunk(int width, int height, int offsetX, int offsetY, int layerCount, float resolution) {
+		this.resolution = resolution;
 		this.width = width;
 		this.height = height;
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
-		geometryData = new ArrayList<AbstractGeometryData>();
 		layerData = new float[layerCount][width][height];
 	}
 
@@ -65,29 +60,12 @@ public class Chunk {
 		return getOffsetY() / height;
 	}
 
-	public AbstractGeometryData getGemoetryData(String creatorId, double seed) {
-		for (AbstractGeometryData d : geometryData) {
-			if (d.isBasedOn(creatorId, seed)) {
-				return d;
-			}
-		}
-		return null;
-	}
-
 	public float[][][] getLayerData() {
 		return layerData;
 	}
 
-	public AbstractGeometryData getGemoetryData(int index) {
-		return geometryData.get(index);
-	}
-
-	public void addGeometryData(AbstractGeometryData data) {
-		geometryData.add(data);
-	}
-
-	public int getGemoetryDataCount() {
-		return geometryData.size();
+	public float getResolution() {
+		return resolution;
 	}
 
 }

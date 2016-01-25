@@ -26,10 +26,13 @@ public class NoiseSampler extends AbstractSampler {
 
 	@Override
 	public float[][] bufferedCreateValues(float x, float y,
-										  int size, float scaleFactor, double seedModifier, ChunkRequestBuffer buffer) {
+										  int size, float scaleFactor, float resoluiton,
+										  double seedModifier, ChunkRequestBuffer buffer) {
 
 
-		return noiseAlgorithm.createData(x, y, size, getModifiedSeed(getContainingSeed(), seedModifier), config.scale * scaleFactor);
+		return noiseAlgorithm.createData(x, y, size,
+				getModifiedSeed(getContainingSeed(), seedModifier),
+				config.scale * scaleFactor, resoluiton);
 	}
 
 	@Override

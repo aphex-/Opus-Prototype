@@ -23,7 +23,7 @@ public class CellNoise extends AbstractNoiseAlgorithm {
 
 
 	@Override
-	public float[][] createData(float x, float y, int size, double seed, float scale) {
+	public float[][] createData(float x, float y, int size, double seed, float scale, float resolution) {
 
 		float[][] data = new float[size][size];
 

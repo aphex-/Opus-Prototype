@@ -346,11 +346,19 @@ public class SimplexNoise extends AbstractNoiseAlgorithm {
 	}
 
 	@Override
-	public float[][] createData(float x, float y, int size, double seed, float scale) {
+	public float[][] createData(float x, float y, int size, double seed, float scale, float resolution) {
 		float[][] data = new float[size][size];
-		for (float tmpX = x; tmpX < (x + size); tmpX++) {
-			for (float tmpY = y; tmpY < (y + size); tmpY++) {
-				data[(int) (tmpX - x)][(int) (tmpY - y)] = (float) noise(tmpX / scale, tmpY / scale, seed);
+
+		for (int indexX = 0; indexX < size; indexX++) {
+			for (int indexY = 0; indexY < size; indexY++) {
+				float scaledBaseX = x / scale;
+				float scaledBaseY = y / scale;
+				float scaledIndexX = (indexX * resolution) / scale;
+				float scaledIndexY = (indexY * resolution) / scale;
+				float noise = (float) noise(
+						scaledBaseX + scaledIndexX,
+						scaledBaseY + scaledIndexY, seed);
+				data[indexX][indexY] = noise;
 			}
 		}
 		return data;

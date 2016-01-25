@@ -550,7 +550,7 @@ public class Editor implements ApplicationListener, ChunkListener {
 			executor.addTask(new Callable<Pixmap>() {
 				@Override
 				public Pixmap call() throws Exception {
-					return createPixmap(chunk.getLayerData()[finalLayerIndex], finalLayerIndex);
+					return createPixmap(chunk.getLayerData()[finalLayerIndex], finalLayerIndex, chunk.getResolution());
 				}
 			}, new SimpleTaskExecutor.ResultListener<Pixmap>() {
 				@Override
@@ -573,16 +573,21 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 
 
-	public Pixmap createPixmap(float data[][], int layerIndex) {
+	public Pixmap createPixmap(float data[][], int layerIndex, float resolution) {
 		TypeInterpreter interpreter = opus.getLayers().get(layerIndex).getInterpreter();
-		Pixmap pixmap = new Pixmap(opus.getConfig().chunkSize, opus.getConfig().chunkSize, Pixmap.Format.RGBA8888);
+		Pixmap pixmap = new Pixmap(
+				(opus.getConfig().chunkSize),
+				(opus.getConfig().chunkSize),
+				Pixmap.Format.RGBA8888);
+
 		pixmap.setColor(Color.BLACK);
 		for (int x = 0; x < opus.getConfig().chunkSize; x++) {
 			for (int y = 0; y < opus.getConfig().chunkSize; y++) {
 				float noise = data[x][(opus.getConfig().chunkSize - 1) - y];
 				int rgb888 = interpreter.getType(noise);
 				if (rgb888 > 0) {
-					pixmap.drawPixel(x, y, ColorInterpreter.toRGBA888(rgb888, 255));
+					pixmap.drawPixel(
+							(x), (y), ColorInterpreter.toRGBA888(rgb888, 255));
 				}
 			}
 		}

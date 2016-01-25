@@ -11,7 +11,7 @@ public class DiamondSquare extends AbstractNoiseAlgorithm {
 
 
 	@Override
-	public float[][] createData(float x, float y, int size, double seed, float scale) {
+	public float[][] createData(float x, float y, int size, double seed, float scale, float resolution) {
 		return createDataMap((int) x, (int) y, size, 7, seed);
 	}
 

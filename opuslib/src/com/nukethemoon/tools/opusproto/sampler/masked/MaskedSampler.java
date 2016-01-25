@@ -24,7 +24,8 @@ public class MaskedSampler extends AbstractSampler {
 
 	@Override
 	protected float[][] bufferedCreateValues(float x, float y, int size,
-											 float scaleFactor, double seedModifier, ChunkRequestBuffer buffer) {
+											 float scaleFactor, float resolution,
+											 double seedModifier, ChunkRequestBuffer buffer) {
 
 		float[][] valueData = new float[size][size];
 
@@ -34,22 +35,22 @@ public class MaskedSampler extends AbstractSampler {
 		double modifiedSeed = getModifiedSeed(getContainingSeed(), seedModifier);
 
 		if (outSampler != null) {
-			float[][] maskData = createMask(x, y, size, modifiedScaleMask, seedModifier, buffer);
-			valueData = outSampler.createValues(x, y, size, modifiedScaleOut, modifiedSeed, buffer);
+			float[][] maskData = createMask(x, y, size, modifiedScaleMask, resolution, seedModifier, buffer);
+			valueData = outSampler.createValues(x, y, size, modifiedScaleOut, resolution, modifiedSeed, buffer);
 			multiply(valueData, maskData);
 		}
 		return valueData;
 	}
 
 	public float [][] createMask(float x, float y, int size,
-								float scaleFactor, double seedModifier, ChunkRequestBuffer buffer) {
+								float scaleFactor, float resolution, double seedModifier, ChunkRequestBuffer buffer) {
 
 		double modifiedSeed = getModifiedSeed(getContainingSeed(), seedModifier);
 		float modifiedScaleMask = scaleFactor * config.scale * maskScaleMod;
 
 		if (buffer != null) {
 			float[][] bufferedData = buffer.getSamplerData(maskSampler.getConfig().id,
-					modifiedSeed, modifiedScaleMask);
+					modifiedSeed, modifiedScaleMask, resolution);
 
 			if (bufferedData != null) {
 				return bufferedData;
@@ -64,12 +65,13 @@ public class MaskedSampler extends AbstractSampler {
 					x, y,
 					size,
 					modifiedScaleMask,
+					resolution,
 					modifiedSeed, buffer);
 		}
 
 		if (buffer != null) {
 			buffer.addSamplerData(maskSampler.getConfig().id, modifiedSeed,
-					modifiedScaleMask, maskData);
+					modifiedScaleMask, resolution, maskData);
 		}
 
 		return maskData;
