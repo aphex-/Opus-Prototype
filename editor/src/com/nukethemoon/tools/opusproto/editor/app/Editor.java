@@ -510,14 +510,14 @@ public class Editor implements ApplicationListener, ChunkListener {
 	}
 
 	private void requestFirstChunks(Opus op) {
-		int startSize = 4;
+		int startSize = 1;
 		renderer.dispose();
 		renderer.initLayerSprite(op.getLayers());
 		List<int[]> positions = new ArrayList<int[]>();
 		for (int mx = -startSize; mx < startSize; mx ++) {
 			for (int my = -startSize; my < startSize; my ++) {
 				double distance = Math.sqrt(Math.pow(0 - mx, 2) + Math.pow(0 - my, 2));
-				if (distance <= startSize) {
+				if (distance < startSize) {
 					positions.add(new int[]{mx, my});
 				}
 			}
@@ -543,21 +543,22 @@ public class Editor implements ApplicationListener, ChunkListener {
 			return;
 		}
 
-		SimpleTaskExecutor<Pixmap> executor = new SimpleTaskExecutor<Pixmap>();
+		final SimpleTaskExecutor<Pixmap> executor = new SimpleTaskExecutor<Pixmap>();
 
 		for (int layerIndex = 0; layerIndex < opus.getLayers().size(); layerIndex++) {
 			final int finalLayerIndex = layerIndex;
 			executor.addTask(new Callable<Pixmap>() {
 				@Override
 				public Pixmap call() throws Exception {
-					return createPixmap(chunk.getLayerData()[finalLayerIndex], finalLayerIndex, chunk.getResolution());
+					return createPixmap(chunk.getLayerData()[finalLayerIndex], finalLayerIndex, chunk.getResolution(), chunk.getWidth());
 				}
 			}, new SimpleTaskExecutor.ResultListener<Pixmap>() {
 				@Override
 				public void onResult(Pixmap result) {
 					Sprite sprite = new Sprite(new Texture(result));
 					result.dispose();
-					sprite.setPosition(chunk.getOffsetX(), chunk.getOffsetY());
+					sprite.setPosition(chunk.getOffsetX(),
+							chunk.getOffsetY());
 					Layer layer = opus.getLayers().get(finalLayerIndex);
 					renderer.addSprite(layer, sprite);
 				}
@@ -573,21 +574,28 @@ public class Editor implements ApplicationListener, ChunkListener {
 
 
 
-	public Pixmap createPixmap(float data[][], int layerIndex, float resolution) {
+	public Pixmap createPixmap(float data[][], int layerIndex, float resolution, int chunkSize) {
 		TypeInterpreter interpreter = opus.getLayers().get(layerIndex).getInterpreter();
 		Pixmap pixmap = new Pixmap(
-				(opus.getConfig().chunkSize),
-				(opus.getConfig().chunkSize),
+				(int) (opus.getConfig().chunkSize),
+				(int) (opus.getConfig().chunkSize),
 				Pixmap.Format.RGBA8888);
 
 		pixmap.setColor(Color.BLACK);
-		for (int x = 0; x < opus.getConfig().chunkSize; x++) {
-			for (int y = 0; y < opus.getConfig().chunkSize; y++) {
-				float noise = data[x][(opus.getConfig().chunkSize - 1) - y];
+		for (int x = 0; x < chunkSize; x++) {
+			for (int y = 0; y < chunkSize; y++) {
+				float noise = data[x][(chunkSize - 1) - y];
 				int rgb888 = interpreter.getType(noise);
 				if (rgb888 > 0) {
-					pixmap.drawPixel(
-							(x), (y), ColorInterpreter.toRGBA888(rgb888, 255));
+					pixmap.setColor(ColorInterpreter.toRGBA888(rgb888, 255));
+					/*pixmap.drawRectangle(
+							(int) (x * resolution), (int) (y * resolution),
+							(int) resolution, (int) resolution);*/
+
+					int pixelX = (int) (x * resolution);
+					int pixelY = (int) (y * resolution);
+					pixmap.drawRectangle(pixelX, pixelY, (int) resolution, (int) resolution);
+
 				}
 			}
 		}

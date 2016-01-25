@@ -13,11 +13,11 @@ public class Chunk {
 
 	public Chunk(int width, int height, int offsetX, int offsetY, int layerCount, float resolution) {
 		this.resolution = resolution;
-		this.width = width;
-		this.height = height;
+		this.width = (int) (width / resolution);
+		this.height = (int) (height / resolution);
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
-		layerData = new float[layerCount][width][height];
+		layerData = new float[layerCount][this.width][this.height];
 	}
 
 	public float getAbsolute(int pX, int pY, int layerIndex) {

@@ -1,6 +1,7 @@
 package com.nukethemoon.tools.opusproto.noise.algorithms;
 
 
+import com.nukethemoon.tools.opusproto.log.Log;
 import com.nukethemoon.tools.opusproto.noise.AbstractNoiseAlgorithm;
 
 /*
@@ -347,14 +348,18 @@ public class SimplexNoise extends AbstractNoiseAlgorithm {
 
 	@Override
 	public float[][] createData(float x, float y, int size, double seed, float scale, float resolution) {
-		float[][] data = new float[size][size];
+		int resolutionSize = (int) (size / resolution);
+		float[][] data = new float[resolutionSize][resolutionSize];
 
-		for (int indexX = 0; indexX < size; indexX++) {
-			for (int indexY = 0; indexY < size; indexY++) {
+		Log.i(SimplexNoise.class, "res " + resolution + " size " + resolutionSize
+			+ " scale " + scale);
+
+		for (int indexX = 0; indexX < resolutionSize; indexX++) {
+			for (int indexY = 0; indexY < resolutionSize; indexY++) {
 				float scaledBaseX = x / scale;
 				float scaledBaseY = y / scale;
-				float scaledIndexX = (indexX * resolution) / scale;
-				float scaledIndexY = (indexY * resolution) / scale;
+				float scaledIndexX = ((indexX * resolution) / scale);
+				float scaledIndexY = ((indexY * resolution) / scale);
 				float noise = (float) noise(
 						scaledBaseX + scaledIndexX,
 						scaledBaseY + scaledIndexY, seed);

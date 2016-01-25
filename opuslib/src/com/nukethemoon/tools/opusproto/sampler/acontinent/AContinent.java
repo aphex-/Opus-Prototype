@@ -28,15 +28,16 @@ public class AContinent extends AbstractSampler {
 											 float scaleFactor, float resolution,
 											 double seedModifier, ChunkRequestBuffer buffer) {
 
+		int resolutionSize = (int) (size / resolution);
+		float[][] data = new float[resolutionSize][resolutionSize];
+		if (c.iterations <= 0) {
+			return data;
+		}
+
 		float[][][] tmpSampleData = new float[c.iterations][][];
-		float[][] data = new float[size][size];
 
 		float modifiedScale = scaleFactor * config.scale;
 		double modifiedSeed = getModifiedSeed(getContainingSeed(), seedModifier);
-
-		if (c.iterations <= 0) {
-			return new float[size][size];
-		}
 
 		for (int i = 0; i < c.iterations; i++) {
 			float levelScale = modifiedScale * (float) Math.pow(c.growth, i);
@@ -47,15 +48,15 @@ public class AContinent extends AbstractSampler {
 					size, tmpSeed, levelScale, resolution);
 
 			multiply(tmpSampleData[i], levelHeight);
-			for (int xTmp = 0; xTmp < size; xTmp++) {
-				for (int yTmp = 0; yTmp < size; yTmp++) {
+			for (int xTmp = 0; xTmp < resolutionSize; xTmp++) {
+				for (int yTmp = 0; yTmp < resolutionSize; yTmp++) {
 					data[xTmp][yTmp] = Combined.or(tmpSampleData[i][xTmp][yTmp], data[xTmp][yTmp]);
 				}
 			}
 		}
 
-		for (int xTmp = 0; xTmp < size; xTmp++) {
-			for (int yTmp = 0; yTmp < size; yTmp++) {
+		for (int xTmp = 0; xTmp < resolutionSize; xTmp++) {
+			for (int yTmp = 0; yTmp < resolutionSize; yTmp++) {
 				float value = data[xTmp][yTmp];
 				value = value * c.iterations; // normalize to range 0 - 1
 				value = Math.min(value, c.size + c.edge); // cut top

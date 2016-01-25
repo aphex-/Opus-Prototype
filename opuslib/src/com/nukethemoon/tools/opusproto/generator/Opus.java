@@ -48,9 +48,7 @@ public class Opus {
 		return null;
 	}
 
-	private Chunk getChunk(int chunkX, int chunkY) {
-		return getChunk(chunkX, chunkY, 1);
-	}
+
 
 	public void clear() {
 		chunks.clear();
@@ -67,16 +65,16 @@ public class Opus {
 	public void requestChunks(int[] chunkX, int[] chunkY) throws ExecutionException, InterruptedException {
 		SimpleTaskExecutor<Chunk> executor = new SimpleTaskExecutor<Chunk>(Runtime.getRuntime().availableProcessors(), threadPriority, true);
 		for (int chunkIndex = 0; chunkIndex < chunkX.length; chunkIndex++) {
-			addChunkRequestTask(executor, chunkX[chunkIndex], chunkY[chunkIndex]);
+			addChunkRequestTask(executor, chunkX[chunkIndex], chunkY[chunkIndex], 1);
 		}
 		executor.execute();
 	}
 
-	private void addChunkRequestTask(SimpleTaskExecutor<Chunk> executor, final int chunkX, final int chunkY) {
+	private void addChunkRequestTask(SimpleTaskExecutor<Chunk> executor, final int chunkX, final int chunkY, final float resolution) {
 
 		final long startMillis = System.currentTimeMillis();
 
-		final Chunk chunk = getChunk(chunkX, chunkY);
+		final Chunk chunk = getChunk(chunkX, chunkY, resolution);
 		// chunk already created
 		if (chunk != null) {
 			onChunkCreated(chunkX, chunkY, chunk);
@@ -85,7 +83,7 @@ public class Opus {
 				@Override
 				public Chunk call() throws Exception {
 					// chunk creation thread
-					return createChunk(chunkX, chunkY);
+					return createChunk(chunkX, chunkY, resolution);
 				}
 			}, new SimpleTaskExecutor.ResultListener<Chunk>() {
 				@Override
@@ -98,10 +96,6 @@ public class Opus {
 				}
 			});
 		}
-	}
-
-	public Chunk createChunk(int chunkX, int chunkY) {
-		return createChunk(chunkX, chunkY, 1);
 	}
 
 	/**

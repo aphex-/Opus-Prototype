@@ -37,7 +37,8 @@ public class Layer extends AbstractSampler {
 	protected float[][] bufferedCreateValues(float x, float y, int size, float scaleFactor,
 											 float resolution,
 											 double seedModifier, ChunkRequestBuffer buffer) {
-		float[][] values = new float[size][size];
+		int resSize = (int) (size / resolution);
+		float[][] values = new float[resSize][resSize];
 		if (maskSampler == null) {
 			return values;
 		}
@@ -52,8 +53,8 @@ public class Layer extends AbstractSampler {
 				float scaleMod = layerConfig.samplerItems[i].scaleModifier;
 				double seedMod = getModifiedSeed(layerConfig.samplerItems[i].seedModifier, sampler.getContainingSeed());
 
-				tmpMask = sampler.createMask(x, y, size, resolution, scaleMod, seedMod, buffer);
-				tmpValues = sampler.createValues(x, y, size, resolution, scaleMod, seedMod, buffer);
+				tmpMask = sampler.createMask(x, y, size, scaleMod, resolution, seedMod, buffer);
+				tmpValues = sampler.createValues(x, y, size, scaleMod, resolution, seedMod, buffer);
 
 				combine(values, tmpValues, tmpMask);
 			}
