@@ -27,7 +27,8 @@ public class MaskedSampler extends AbstractSampler {
 											 float scaleFactor, float resolution,
 											 double seedModifier, ChunkRequestBuffer buffer) {
 
-		float[][] valueData = new float[size][size];
+		int resSize = (int) (size / resolution);
+		float[][] valueData = new float[resSize][resSize];
 
 		float modifiedScaleOut = scaleFactor * config.scale * sampleScaleMod;
 		float modifiedScaleMask = scaleFactor * config.scale * maskScaleMod;
@@ -57,9 +58,9 @@ public class MaskedSampler extends AbstractSampler {
 			}
 		}
 
+		int resSize = (int) (size / resolution);
 
-
-		float[][] maskData = new float[size][size];
+		float[][] maskData = new float[resSize][resSize];
 		if (maskSampler != null) {
 			return maskSampler.createValues(
 					x, y,
