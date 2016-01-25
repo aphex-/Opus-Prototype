@@ -351,9 +351,6 @@ public class SimplexNoise extends AbstractNoiseAlgorithm {
 		int resolutionSize = (int) (size / resolution);
 		float[][] data = new float[resolutionSize][resolutionSize];
 
-		Log.i(SimplexNoise.class, "res " + resolution + " size " + resolutionSize
-			+ " scale " + scale);
-
 		for (int indexX = 0; indexX < resolutionSize; indexX++) {
 			for (int indexY = 0; indexY < resolutionSize; indexY++) {
 				float scaledBaseX = x / scale;
