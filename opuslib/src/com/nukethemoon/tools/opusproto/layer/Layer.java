@@ -37,7 +37,7 @@ public class Layer extends AbstractSampler {
 	protected float[][] bufferedCreateValues(float x, float y, int size, float scaleFactor,
 											 float resolution,
 											 double seedModifier, ChunkRequestBuffer buffer) {
-		int resSize = (int) (size / resolution);
+		int resSize = Math.round(size / resolution);
 		float[][] values = new float[resSize][resSize];
 		if (maskSampler == null) {
 			return values;

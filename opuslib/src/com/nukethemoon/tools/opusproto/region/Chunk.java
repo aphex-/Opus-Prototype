@@ -10,11 +10,18 @@ public class Chunk {
 	private float[][][] layerData;
 	private float resolution;
 
+	private int originalWidth;
+	private int originalHeight;
 
-	public Chunk(int width, int height, int offsetX, int offsetY, int layerCount, float resolution) {
+	private int overlap;
+
+	public Chunk(int width, int height, int offsetX, int offsetY, int layerCount, float resolution, int overlap) {
 		this.resolution = resolution;
-		this.width = (int) (width / resolution);
-		this.height = (int) (height / resolution);
+		this.originalHeight = height;
+		this.originalWidth = width;
+		this.overlap = overlap;
+		this.width = Math.round((width - overlap) / resolution) + overlap;
+		this.height = Math.round((height - overlap) / resolution) + overlap;
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 		layerData = new float[layerCount][this.width][this.height];
@@ -68,4 +75,15 @@ public class Chunk {
 		return resolution;
 	}
 
+	public int getOriginalWidth() {
+		return originalWidth;
+	}
+
+	public int getOriginalHeight() {
+		return originalHeight;
+	}
+
+	public int getOverlap() {
+		return overlap;
+	}
 }

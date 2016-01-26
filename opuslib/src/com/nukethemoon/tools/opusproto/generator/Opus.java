@@ -118,7 +118,7 @@ public class Opus {
 
 		Chunk chunk = new Chunk(
 				config.chunkSize, config.chunkSize,
-				chunkOffsetX, chunkOffsetY, layers.size(), resolution);
+				chunkOffsetX, chunkOffsetY, layers.size(), resolution, getConfig().chunkOverlap);
 
 
 		ChunkRequestBuffer dataBuffer = null; // buffer for this request to avoid the creation of a layer twice
