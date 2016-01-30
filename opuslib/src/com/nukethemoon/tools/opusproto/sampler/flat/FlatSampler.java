@@ -22,7 +22,7 @@ public class FlatSampler extends AbstractSampler {
 										  float resolution,
 										  double seedModifier, ChunkRequestBuffer buffer) {
 
-		int resSize = Math.round(size / resolution);
+		int resSize = (int) Math.ceil(size / resolution);
 		float[][] data = new float[resSize][resSize];
 		for (int xTmp = 0; xTmp < data.length; xTmp++) {
 			for (int yTmp = 0; yTmp < data[xTmp].length; yTmp++) {

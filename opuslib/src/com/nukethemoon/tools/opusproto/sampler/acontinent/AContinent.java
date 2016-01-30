@@ -28,7 +28,7 @@ public class AContinent extends AbstractSampler {
 											 float scaleFactor, float resolution,
 											 double seedModifier, ChunkRequestBuffer buffer) {
 
-		int resolutionSize = Math.round(size / resolution);
+		int resolutionSize = (int) Math.ceil(size / resolution);
 		float[][] data = new float[resolutionSize][resolutionSize];
 		if (c.iterations <= 0) {
 			return data;
