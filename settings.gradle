@@ -1,4 +1,0 @@
-include 'editor', 'opuslib', 'opusloaderjson'
-include 'opusloaderjson'
-include 'example'
-
