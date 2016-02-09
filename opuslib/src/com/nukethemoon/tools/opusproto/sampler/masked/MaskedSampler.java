@@ -38,7 +38,9 @@ public class MaskedSampler extends AbstractSampler {
 		if (outSampler != null) {
 			float[][] maskData = createMask(x, y, size, modifiedScaleMask, resolution, seedModifier, buffer);
 			valueData = outSampler.createValues(x, y, size, modifiedScaleOut, resolution, modifiedSeed, buffer);
-			multiply(valueData, maskData);
+			if (maskData != null) {
+				multiply(valueData, maskData);
+			}
 		}
 		return valueData;
 	}
@@ -58,9 +60,6 @@ public class MaskedSampler extends AbstractSampler {
 			}
 		}
 
-		int resSize = (int) Math.ceil(size / resolution);
-
-		float[][] maskData = new float[resSize][resSize];
 		if (maskSampler != null) {
 			return maskSampler.createValues(
 					x, y,
@@ -69,13 +68,7 @@ public class MaskedSampler extends AbstractSampler {
 					resolution,
 					modifiedSeed, buffer);
 		}
-
-		if (buffer != null) {
-			buffer.addSamplerData(maskSampler.getConfig().id, modifiedSeed,
-					modifiedScaleMask, resolution, maskData);
-		}
-
-		return maskData;
+		return null;
 	}
 
 	@Override

@@ -79,7 +79,7 @@ public class SimplePositionScattering extends AbstractGeometrySampler {
 
 
 	private float randomizePosition(float gridX, float gridY, double seed) {
-		return ((float) (this.simplexNoise.noise(gridX, gridY, seed) - 0.5f) * 2f) * c.maximumDistance;
+		return ((float) (this.simplexNoise.noise(gridX, gridY, (float)seed) - 0.5f) * 2f) * c.maximumDistance;
 
 	}
 

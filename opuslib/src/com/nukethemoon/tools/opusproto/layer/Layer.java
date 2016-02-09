@@ -56,7 +56,9 @@ public class Layer extends AbstractSampler {
 				tmpMask = sampler.createMask(x, y, size, scaleMod, resolution, seedMod, buffer);
 				tmpValues = sampler.createValues(x, y, size, scaleMod, resolution, seedMod, buffer);
 
-				combine(values, tmpValues, tmpMask);
+				if (tmpMask != null) {
+					combine(values, tmpValues, tmpMask);
+				}
 			}
 		}
 

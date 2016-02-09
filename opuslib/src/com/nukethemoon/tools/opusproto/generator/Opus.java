@@ -105,10 +105,6 @@ public class Opus {
 	 * @return The created chunk.
 	 */
 	public Chunk createChunk(int chunkX, int chunkY, float resolution) {
-		Chunk buffered = getChunk(chunkX, chunkY, resolution);
-		if (buffered != null) {
-			return buffered;
-		}
 
 		int requestOffsetX = chunkX * (config.chunkSize - config.chunkOverlap);
 		int requestOffsetY = chunkY * (config.chunkSize - config.chunkOverlap);
