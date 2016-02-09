@@ -4,6 +4,8 @@ You can use the editor to create a world and use the library to import it to you
 Opus prototype offers you a way to easily describe landscapes (like seen in Minecraft) 
 with values that are based on pseudo random noise algorithms.
 
+A build mac and windows build of the editor can be loaded here: http://nuke-the-moon.itch.io/opus
+
 This library is used for the game: http://nuke-the-moon.itch.io/alien-ark
 Created by www.nuke-the-moon.com
 
@@ -11,3 +13,16 @@ This repo was released in a hurry. The library is work in progress. Builds of th
 For more information about Opus Prototype read the documentation: editor/data/docu/index.html
 
 Licenced under the Apache License Version 2.0
+
+## How to load a saved world ###
+To load a chunk of a saved world you have to import the base library *opuslib-0.0.1a.jar* and *opusloaderjson-0.0.1a.jar* to read the json format.
+```java
+// create a loder for json files
+OpusLoaderJson opusJsonLoader = new OpusLoaderJson();
+byte[] bytes = opusjsonLoader.readFile("worlds/NewWorld.json");
+// load opus based on a saved world
+Opus opus = opusjsonLoader.load(new Samplers(), new Algorithms(), bytes);
+// create a chunk at x:0 y:0 with the standard resolution 1
+Chunk chunk = opus.createChunk(0, 0, 1);
+```
+The chunk now contains a map of height values. The instance of opus contains layer and interpreter information.
