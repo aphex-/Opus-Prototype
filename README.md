@@ -9,11 +9,12 @@ A mac and windows build of the editor can be loaded here: http://nuke-the-moon.i
 A short preview / tutorial of the functionality: https://youtu.be/3owuS5VRnAM
 
 This library is used for the game: http://nuke-the-moon.itch.io/alien-ark
+And for the game: http://nuke-the-moon.com/pioneerskies/index.html
 Created by www.nuke-the-moon.com
 
 For more information about Opus Prototype read the documentation: editor/data/docu/index.html
 
-This repo was released in a hurry. The library is work in progress. 
+This repo was released in a hurry. ~~The library is work in progress.~~
 
 
 Licenced under the Apache License Version 2.0
