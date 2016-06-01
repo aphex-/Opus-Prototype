@@ -4,7 +4,7 @@ You can use the editor to create a world and use the library to import it to you
 Opus prototype offers you a way to easily describe landscapes (like seen in Minecraft) 
 with values that are based on pseudo random noise algorithms.
 
-A build mac and windows build of the editor can be loaded here: http://nuke-the-moon.itch.io/opus
+A mac and windows build of the editor can be loaded here: http://nuke-the-moon.itch.io/opus
 
 A short preview / tutorial of the functionality: https://youtu.be/3owuS5VRnAM
 
